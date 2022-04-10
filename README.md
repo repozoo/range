@@ -9,6 +9,7 @@ to help u work with range(s) or interval(s).
         + [remove - Example](#remove---example)
         + [intersection - Example](#intersection---example)
         + [custom RangeFactory - Example](#custom-rangefactory---example)
+    * [Maven](#maven)
 - [Concepts](#concepts)
     * [API](#api)
 
@@ -108,6 +109,14 @@ YearMonth jan = YearMonth.parse("2022-01");
 YearMonth dec = YearMonth.parse("2022-12");
 // use it 
 Range<YearMonth> range = createRange.between(jan, dec);
+```
+### Maven
+```
+<dependency>
+  <groupId>org.repozoo.commons</groupId>
+  <artifactId>range</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</dependency>
 ```
 
 ## Concepts
