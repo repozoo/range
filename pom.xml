@@ -123,4 +123,12 @@
     </dependencies>
   </dependencyManagement>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub repozoo Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/repozoo/range</url>
+    </repository>
+  </distributionManagement>
+
 </project>
