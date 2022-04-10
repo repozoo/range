@@ -8,13 +8,18 @@ import java.util.function.UnaryOperator;
 
 public class YearMonthRange {
 
+    private static final RangeFactory.CreateRange<YearMonth> createRange = createRange();
+
     public static Range<YearMonth> between(YearMonth from, YearMonth to) {
+        return createRange.between(from, to);
+    }
+
+    private static RangeFactory.CreateRange<YearMonth> createRange() {
         UnaryOperator<YearMonth> next = n -> n.plusMonths(1);
         UnaryOperator<YearMonth> previous = n ->  n.minusMonths(1);
-        RangeFactory.CreateRange<YearMonth> createRange = RangeFactory.forType(YearMonth.class)
+        return RangeFactory.forType(YearMonth.class)
                 .withComparator(YearMonth::compareTo)
                 .withIterator(next, previous)
                 .build();
-        return createRange.between(from, to);
     }
 }

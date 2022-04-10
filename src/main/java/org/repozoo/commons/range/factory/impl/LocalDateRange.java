@@ -8,13 +8,19 @@ import java.util.function.UnaryOperator;
 
 public class LocalDateRange {
 
+    private static final RangeFactory.CreateRange<LocalDate> createRange = createRange();
+
     public static Range<LocalDate> between(LocalDate from, LocalDate to) {
+        RangeFactory.CreateRange<LocalDate> createRange = createRange();
+        return createRange.between(from, to);
+    }
+
+    private static RangeFactory.CreateRange<LocalDate> createRange() {
         UnaryOperator<LocalDate> next = n -> n.plusDays(1);
         UnaryOperator<LocalDate> previous = n ->  n.minusDays(1);
-        RangeFactory.CreateRange<LocalDate> createRange = RangeFactory.forType(LocalDate.class)
+        return RangeFactory.forType(LocalDate.class)
                 .withComparator(LocalDate::compareTo)
                 .withIterator(next, previous)
                 .build();
-        return createRange.between(from, to);
     }
 }
