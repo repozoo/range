@@ -1,5 +1,6 @@
 package org.repozoo.commons.range.impl;
 
+import org.repozoo.commons.range.factory.RangeFactory;
 import org.repozoo.commons.range.factory.impl.LocalDateRange;
 import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.RangeSet;
@@ -7,10 +8,28 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LocalDateRangeExamplesTest {
+@SuppressWarnings("unused")
+class ExamplesTest {
+
+    @Test
+    void createYearMonthRange_example() {
+        //build up the factory
+        UnaryOperator<YearMonth> next = n -> n.plusMonths(1);
+        UnaryOperator<YearMonth> previous = n ->  n.minusMonths(1);
+        RangeFactory.CreateRange<YearMonth> createRange = RangeFactory.forType(YearMonth.class)
+                .withComparator(YearMonth::compareTo)
+                .withIterator(next, previous)
+                .build();
+
+        // use the factory
+        YearMonth jan = YearMonth.parse("2022-01");
+        YearMonth dec = YearMonth.parse("2022-12");
+        Range<YearMonth> range = createRange.between(jan, dec);
+    }
 
     @Test
     void add_example() {

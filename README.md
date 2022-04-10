@@ -2,68 +2,110 @@
 - - - -
 Range is a small library,<br>
 trying to cover the basic concepts of a range (or interval) - a contiguous span of values **from _start_ to _end_** _inclusive_ -<br>
-including a set of functions to interact with 'em.<br><br> 
+and a set of functions to interact with 'em.<br><br> 
+- - - -
+## Usage
 You can either
 - use predefined Range factories
-  - `Range<YearMonth> range = YearMonthRange.of(start, end);`
-  - `Range<LocalDate> range = LocalDateRange.of(start, end);`
-  - `Range<LocalDateTime> range = LocalDateTimeRange.of(start, end);`
-  - ...
-- or create custom ones
-- - - -
-## API
-<img src="./documentation/images/range-API.svg" alt="range-api">
+    - `Range<LocalDate> dateRange = LocalDateRange.between(monday, friday);`
+    - `Range<LocalDateTime> timeRange = LocalTimeRange.between(now, now.plusHours(8));`
+    - ...
+- or create custom ones (see [custom RangeFactory - Example](####custom-RangeFactory-Example))
 
-## Usage
+
 ### Examples
 #### add - Example
 ```java
 // Assing
 YearMonth dec2021 = YearMonth.parse("2021-12");
 RangeSet<LocalDate> vacationSahrah = RangeSet.of(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(5)),
-    LocalDateRange.of(dec2021.atDay(14), dec2021.atDay(26)),
-    LocalDateRange.of(dec2021.atDay(28), dec2021.atDay(31))
+    LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
+    LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),
+    LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(31))
 );
 RangeSet<LocalDate> vacationJimmy = RangeSet.of(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(9)),
-    LocalDateRange.of(dec2021.atDay(23), dec2021.atDay(29))
+    LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
+    LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(29))
 );
 RangeSet<LocalDate> vacationReggy = RangeSet.of(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(9))
+    LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9))
 );
 // Act
 RangeSet<LocalDate> atLeastOneIsAbsent = vacationSahrah.add(vacationJimmy).add(vacationReggy);
 // Assert
-assertThat(atLeastOneIsAbsent.stream()).containsExactly(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(9)),
-    LocalDateRange.of(dec2021.atDay(14), dec2021.atDay(31))
+assertThat(atLeastOneIsAbsent.stream())
+    .containsExactly(
+        LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
+        LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(31))
 );
 ```
+#### remove - Example
+```java
+// Assing
+YearMonth dec2021 = YearMonth.parse("2021-12");
+Range<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
+RangeSet<LocalDate> vacationSahrah = RangeSet.of(
+        LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
+        LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),
+        LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(31))
+);
+RangeSet<LocalDate> vacationJimmy = RangeSet.of(
+        LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
+        LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(29))
+);
+// Act
+RangeSet<LocalDate> everybodyIsPresent = december.remove(vacationSahrah).remove(vacationJimmy);
+// Assert
+assertThat(everybodyIsPresent.stream().flatMap(RangeSet::stream))
+        .containsExactly(
+                LocalDateRange.between(dec2021.atDay(10), dec2021.atDay(13))
+        );
+```
+
 #### intersection - Example
 ```java
 // Assing
 YearMonth dec2021 = YearMonth.parse("2021-12");
 RangeSet<LocalDate> vacationSahrah = RangeSet.of(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(5)),
-    LocalDateRange.of(dec2021.atDay(14), dec2021.atDay(26)),
-    LocalDateRange.of(dec2021.atDay(28), dec2021.atDay(31))
+        LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
+        LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),
+        LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(31))
 );
 RangeSet<LocalDate> vacationJimmy = RangeSet.of(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(9)),
-    LocalDateRange.of(dec2021.atDay(23), dec2021.atDay(29))
+        LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
+        LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(29))
 );
 // Act
 RangeSet<LocalDate> everybodyIsAbsent = vacationSahrah.intersection(vacationJimmy);
 // Assert
-assertThat(everybodyIsAbsent.stream()).containsExactly(
-    LocalDateRange.of(dec2021.atDay(1), dec2021.atDay(5)),
-    LocalDateRange.of(dec2021.atDay(23), dec2021.atDay(26)),
-    LocalDateRange.of(dec2021.atDay(28), dec2021.atDay(29))
-);
+assertThat(everybodyIsAbsent.stream())
+        .containsExactly(
+                LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
+                LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(26)),
+                LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(29))
+        );
+```
+#### custom RangeFactory - Example
+Let's say we want to create a Range of type `YearMonth` and a factory for that type does not exist yet.
+
+```java
+//build up the factory
+UnaryOperator<YearMonth> next = n -> n.plusMonths(1);
+UnaryOperator<YearMonth> previous = n ->  n.minusMonths(1);
+RangeFactory.CreateRange<YearMonth> createRange = RangeFactory.forType(YearMonth.class)
+                                                            .withComparator(YearMonth::compareTo)
+                                                            .withIterator(next, previous)
+                                                            .build();
+
+YearMonth jan = YearMonth.parse("2022-01");
+YearMonth dec = YearMonth.parse("2022-12");
+// use it 
+Range<YearMonth> range = createRange.between(jan, dec);
 ```
 
-## Architecture
-TODO ...
+## Concepts
+<img src="./documentation/images/range-API.svg" alt="range-api">
+
+### API
 
 <img src="./documentation/images/range-and-rangeset-uml.svg" alt="range-uml">
