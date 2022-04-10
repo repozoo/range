@@ -3,6 +3,15 @@
 Range is a small java library,<br>
 to help u work with range(s) or interval(s). 
 - - - -
+- [Usage](#usage)
+    * [Examples](#examples)
+        + [add - Example](#add---example)
+        + [remove - Example](#remove---example)
+        + [intersection - Example](#intersection---example)
+        + [custom RangeFactory - Example](#custom-rangefactory---example)
+- [Concepts](#concepts)
+    * [API](#api)
+
 ## Usage
 You can either
 - use predefined Range factories
