@@ -10,7 +10,7 @@ helping to work with range(s) or interval(s).
         + [intersection - Example](#intersection---example)
         + [custom RangeFactory - Example](#custom-rangefactory---example)
     * [Maven](#maven)
-- [Concepts](#concepts)
+- [Architecture](#architecture)
     * [API](#api)
 
 ## Usage
@@ -119,9 +119,20 @@ Range<YearMonth> range = createRange.between(jan, dec);
 </dependency>
 ```
 
-## Concepts
-<img src="./documentation/images/range-API.svg" alt="range-api">
+## Architecture
+The most general type is `RangeSet`, basically representing a list of `Range`s.<br>
+Why `RangeSet`? The more specific `Range` type does not suffice to cover all basic range functionality.<br>
+Example: Imagine 
+- some range `a[1 to 10]` and `b[3 to 5]`.<br>
+- `a.remove(b)` results in _(some scattered range)_ `c1[1 to 2]` and `c2[6 to 10]`
 
-### API
+Therefore `RangeSet` is the main building bloc.<br>
+The type `Range` is just a special `RangeSet` containing exactly one `Range`<br>
+and the two `Value`s `from` and `to` _(inclusive)_.
 
 <img src="./documentation/images/range-and-rangeset-uml.svg" alt="range-uml">
+
+
+### API
+Most important functionalities
+<img src="./documentation/images/range-API.svg" alt="range-api">
