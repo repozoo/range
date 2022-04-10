@@ -14,6 +14,17 @@ public interface Range<T> extends RangeSet<T> {
 
     Value<T> to();
 
+    @Override
+    default boolean intersects(RangeSet<T> others) {
+        return others.stream().anyMatch(other -> !isBefore(other) && !isAfter(other));
+    }
+
+    @Override
+    default RangeSet<T> intersection(RangeSet<T> others) {
+        return others.stream().map(other -> Range.intersection(this, other))
+                .reduce(RangeSet.empty(), RangeSet::sum);
+    }
+
     /**
      * True if this.to < other.from, false otherwise.
      */
@@ -39,17 +50,6 @@ public interface Range<T> extends RangeSet<T> {
     @Override
     default Stream<Range<T>> stream() {
         return Stream.of(this);
-    }
-
-    @Override
-    default boolean intersects(RangeSet<T> others) {
-        return others.stream().anyMatch(other -> !isBefore(other) && !isAfter(other));
-    }
-
-    @Override
-    default RangeSet<T> intersection(RangeSet<T> others) {
-        return others.stream().map(other -> Range.intersection(this, other))
-                .reduce(RangeSet.empty(), RangeSet::sum);
     }
 
     default boolean startsBefore(Range<T> other) {

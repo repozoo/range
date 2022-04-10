@@ -14,16 +14,16 @@ public interface RangeSet<T> {
         return others.stream().allMatch(other -> stream().anyMatch(contains(other)));
     }
 
-    private Predicate<Range<T>> contains(Range<T> other) {
-        return range -> !other.startsBefore(range) && !other.endsAfter(range);
-    }
-
     default boolean intersects(RangeSet<T> others) {
         return stream().anyMatch(aRange -> others.stream().anyMatch(aRange::intersects));
     }
 
-    default List<Range<T>> getRanges() {
-        return stream().collect(Collectors.toList());
+    default RangeSet<T> intersection(RangeSet<T> others) {
+        List<Range<T>> intersections = stream()
+                .map(others::intersection)
+                .flatMap(RangeSet::stream)
+                .collect(Collectors.toList());
+        return newRangeSet(intersections);
     }
 
     default boolean distinct(Range<T> other) {
@@ -51,6 +51,21 @@ public interface RangeSet<T> {
         return newRangeSet(newRanges);
     }
 
+    /**
+     * True if this set has no range
+     */
+    default boolean isEmpty() {
+        return getRanges().isEmpty();
+    }
+
+    default List<Range<T>> getRanges() {
+        return stream().collect(Collectors.toList());
+    }
+
+    private Predicate<Range<T>> contains(Range<T> other) {
+        return range -> !other.startsBefore(range) && !other.endsAfter(range);
+    }
+
     private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> subtrahend) {
         if (aRange.intersects(subtrahend)) {
             if (subtrahend.contains(aRange)) {
@@ -69,21 +84,6 @@ public interface RangeSet<T> {
         } else {
             return aRange;
         }
-    }
-
-    /**
-     * True if this set has no range
-     */
-    default boolean isEmpty() {
-        return getRanges().isEmpty();
-    }
-
-    default RangeSet<T> intersection(RangeSet<T> others) {
-        List<Range<T>> intersections = stream()
-                .map(others::intersection)
-                .flatMap(RangeSet::stream)
-                .collect(Collectors.toList());
-        return newRangeSet(intersections);
     }
 
     static <T> RangeSet<T> empty() {
@@ -109,6 +109,14 @@ public interface RangeSet<T> {
         return RangeSet.newRangeSet(stackedRanges);
     }
 
+    static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
+        if (aRange.intersects(other)) {
+            return Range.enclose(aRange, other);
+        } else {
+            return RangeSet.newRangeSet(List.of(aRange, other));
+        }
+    }
+
     static <T> RangeSet<T> sum(RangeSet<T> set1, RangeSet<T> set2) {
         return RangeSet.normalize(Stream.concat(set1.stream(), set2.stream()));
     }
@@ -124,14 +132,6 @@ public interface RangeSet<T> {
             Range<T> topRange = stack.pop();
             RangeSet<T> sum = add(topRange, range);
             sum.stream().forEach(stack::push);
-        }
-    }
-
-    static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
-        if (aRange.intersects(other)) {
-            return Range.enclose(aRange, other);
-        } else {
-            return RangeSet.newRangeSet(List.of(aRange, other));
         }
     }
 
