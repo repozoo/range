@@ -1,8 +1,7 @@
 # range
 - - - -
-Range is a small library,<br>
-trying to cover the basic concepts of a range (or interval) - a contiguous span of values **from _start_ to _end_** _inclusive_ -<br>
-and a set of functions to interact with 'em.<br><br> 
+Range is a small java library,<br>
+to help u work with range(s) or interval(s). 
 - - - -
 ## Usage
 You can either
