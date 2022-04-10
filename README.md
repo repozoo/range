@@ -1,7 +1,7 @@
 # range
 - - - -
 Range is a small java library,<br>
-to help u work with range(s) or interval(s). 
+helping to work with range(s) or interval(s). 
 - - - -
 - [Usage](#usage)
     * [Examples](#examples)
