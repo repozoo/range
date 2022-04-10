@@ -1,0 +1,9 @@
+/.idea/vcs.xml
+/.idea/encodings.xml
+target/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
