@@ -12,8 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    - name: Build and Run Tests
-      run: mvn -B package --file pom.xml
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
