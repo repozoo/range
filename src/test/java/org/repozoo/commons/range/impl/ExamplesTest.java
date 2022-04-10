@@ -58,6 +58,29 @@ class ExamplesTest {
     }
 
     @Test
+    void remove_example() {
+        // Assing
+        YearMonth dec2021 = YearMonth.parse("2021-12");
+        Range<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
+        RangeSet<LocalDate> vacationSahrah = RangeSet.of(
+                LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
+                LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),
+                LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(31))
+        );
+        RangeSet<LocalDate> vacationJimmy = RangeSet.of(
+                LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
+                LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(29))
+        );
+        // Act
+        RangeSet<LocalDate> everybodyIsPresent = december.remove(vacationSahrah).remove(vacationJimmy);
+        // Assert
+        assertThat(everybodyIsPresent.stream())
+                .containsExactly(
+                        LocalDateRange.between(dec2021.atDay(10), dec2021.atDay(13))
+                );
+    }
+
+    @Test
     void intersection_example() {
         // Assing
         YearMonth dec2021 = YearMonth.parse("2021-12");
@@ -78,29 +101,6 @@ class ExamplesTest {
                         LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
                         LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(26)),
                         LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(29))
-                );
-    }
-
-    @Test
-    void remove_example() {
-        // Assing
-        YearMonth dec2021 = YearMonth.parse("2021-12");
-        Range<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
-        RangeSet<LocalDate> vacationSahrah = RangeSet.of(
-                LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
-                LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),
-                LocalDateRange.between(dec2021.atDay(28), dec2021.atDay(31))
-        );
-        RangeSet<LocalDate> vacationJimmy = RangeSet.of(
-                LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
-                LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(29))
-        );
-        // Act
-        RangeSet<LocalDate> everybodyIsPresent = december.remove(vacationSahrah).remove(vacationJimmy);
-        // Assert
-        assertThat(everybodyIsPresent.stream().flatMap(RangeSet::stream))
-                .containsExactly(
-                        LocalDateRange.between(dec2021.atDay(10), dec2021.atDay(13))
                 );
     }
 }

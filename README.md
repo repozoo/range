@@ -56,7 +56,7 @@ RangeSet<LocalDate> vacationJimmy = RangeSet.of(
 // Act
 RangeSet<LocalDate> everybodyIsPresent = december.remove(vacationSahrah).remove(vacationJimmy);
 // Assert
-assertThat(everybodyIsPresent.stream().flatMap(RangeSet::stream))
+assertThat(everybodyIsPresent.stream())
         .containsExactly(
                 LocalDateRange.between(dec2021.atDay(10), dec2021.atDay(13))
         );
