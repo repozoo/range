@@ -134,5 +134,5 @@ and the two `Value`s `from` and `to` _(inclusive)_.
 
 
 ### API
-Most important functionalities
+Most important ones
 <img src="./documentation/images/range-API.svg" alt="range-api">
