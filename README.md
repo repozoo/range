@@ -9,8 +9,7 @@ You can either
     - `Range<LocalDate> dateRange = LocalDateRange.between(monday, friday);`
     - `Range<LocalDateTime> timeRange = LocalTimeRange.between(now, now.plusHours(8));`
     - ...
-- or create custom ones (see [custom RangeFactory - Example](####custom-RangeFactory-Example))
-
+- or create custom ones (see [custom RangeFactory - Example](#custom-rangefactory---example))
 
 ### Examples
 #### add - Example
