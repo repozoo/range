@@ -9,27 +9,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RangeTest {
 
     @Test
-    void isBefore_isTrueIfEntireRangeIsBeforeOther() {
-        assertThat(IntRange.between(1, 1).isBefore(IntRange.between(2, 2))).isTrue();
+    void isBefore_isOnlyTrueIfEntireRangeIsBeforeOther() {
         assertThat(IntRange.between(1, 2).isBefore(IntRange.between(3, 4))).isTrue();
-    }
-
-    @Test
-    void isBefore_isFalseIfEntireRangeIsAfterOther() {
-        assertThat(IntRange.between(2, 2).isBefore(IntRange.between(1, 1))).isFalse();
-        assertThat(IntRange.between(2, 3).isBefore(IntRange.between(1, 1))).isFalse();
-    }
-
-    @Test
-    void isBefore_isFalseIfRangesAreEqual() {
-        assertThat(IntRange.between(2, 2).isBefore(IntRange.between(2, 2))).isFalse();
-    }
-
-    @Test
-    void isBefore_isFalseIfRangesIntersect() {
-        assertThat(IntRange.between(1, 3).isBefore(IntRange.between(3, 4))).isFalse();
-        assertThat(IntRange.between(3, 4).isBefore(IntRange.between(1, 3))).isFalse();
-        assertThat(IntRange.between(1, 4).isBefore(IntRange.between(2, 3))).isFalse();
+        assertThat(IntRange.between(2, 3).isBefore(IntRange.between(3, 4))).isFalse();
+        assertThat(IntRange.between(3, 3).isBefore(IntRange.between(3, 4))).isFalse();
+        assertThat(IntRange.between(3, 4).isBefore(IntRange.between(3, 4))).isFalse();
+        assertThat(IntRange.between(4, 5).isBefore(IntRange.between(3, 4))).isFalse();
+        assertThat(IntRange.between(5, 5).isBefore(IntRange.between(3, 4))).isFalse();
     }
 
     @Test
