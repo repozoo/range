@@ -10,9 +10,8 @@ public class LocalDateRange {
 
     private static final RangeFactory.CreateRange<LocalDate> createRange = createRange();
 
-    public static Range<LocalDate> between(LocalDate from, LocalDate to) {
-        RangeFactory.CreateRange<LocalDate> createRange = createRange();
-        return createRange.between(from, to);
+    public static Range<LocalDate> between(LocalDate min, LocalDate max) {
+        return createRange.between(min, max);
     }
 
     private static RangeFactory.CreateRange<LocalDate> createRange() {

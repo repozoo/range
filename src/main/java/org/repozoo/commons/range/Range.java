@@ -41,14 +41,14 @@ public interface Range<T> extends RangeSet<T> {
     }
 
     /**
-     * true if this.to < other.from, false otherwise.
+     * true if this.max() {@literal <} other.min(), false otherwise.
      */
     default boolean isBefore(Range<T> other) {
         return max().isBefore(other.min());
     }
 
     /**
-     * true if this.from > other.to, false otherwise.
+     * true if this.from {@literal >} other.to, false otherwise.
      */
     default boolean isAfter(Range<T> other) {
         return min().isAfter(other.max());
@@ -91,8 +91,8 @@ public interface Range<T> extends RangeSet<T> {
         return Range.between(minStart, maxEnd);
     }
 
-    static <X> Range<X> between(Value<X> from, Value<X> to) {
-        return RangeImpl.between(from, to);
+    static <X> Range<X> between(Value<X> min, Value<X> max) {
+        return RangeImpl.between(min, max);
     }
 
     private static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {

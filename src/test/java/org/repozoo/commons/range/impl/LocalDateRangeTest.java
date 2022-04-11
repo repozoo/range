@@ -14,14 +14,14 @@ class LocalDateRangeTest {
     @Test
     void create_neitherStartNorEndAllowedToBeNull() {
 
-        LocalDate from = LocalDate.parse("2021-01-01");
-        LocalDate to = LocalDate.parse("2021-02-01");
+        LocalDate min = LocalDate.parse("2021-01-01");
+        LocalDate max = LocalDate.parse("2021-02-01");
 
-        assertThatThrownBy(() -> LocalDateRange.between(from, null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> LocalDateRange.between(null, to)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> LocalDateRange.between(min, null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> LocalDateRange.between(null, max)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> LocalDateRange.between(null, null)).isInstanceOf(NullPointerException.class);
 
-        assertDoesNotThrow(() -> LocalDateRange.between(from, to));
+        assertDoesNotThrow(() -> LocalDateRange.between(min, max));
     }
 
     @Test

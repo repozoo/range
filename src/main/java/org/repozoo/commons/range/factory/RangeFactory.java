@@ -10,7 +10,7 @@ import java.util.function.UnaryOperator;
 public class RangeFactory {
 
     public interface CreateRange<T> {
-        Range<T> between(T from, T to);
+        Range<T> between(T min, T max);
     }
 
     @SuppressWarnings("unused")
@@ -38,9 +38,9 @@ public class RangeFactory {
 
         public CreateRange<Y> build() {
             return (from, to) -> {
-                Value<Y> start = Value.of(from, iterator, comparator);
-                Value<Y> end = Value.of(to, iterator, comparator);
-                return Range.between(start, end);
+                Value<Y> min = Value.of(from, iterator, comparator);
+                Value<Y> max = Value.of(to, iterator, comparator);
+                return Range.between(min, max);
             };
         }
     }

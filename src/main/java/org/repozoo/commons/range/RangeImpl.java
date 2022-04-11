@@ -13,28 +13,28 @@ import java.util.Objects;
 @EqualsAndHashCode
 class RangeImpl<T> implements Range<T> {
 
-    Value<T> from;
-    Value<T> to;
+    Value<T> min;
+    Value<T> max;
 
-    private RangeImpl(Value<T> from, Value<T> to) {
-        Objects.requireNonNull(from);
-        Objects.requireNonNull(to);
-        if (from.isAfter(to)) {
-            throw new IllegalArgumentException("from must not be after to, \nfrom: " + from + "\nto: " + to);
+    private RangeImpl(Value<T> min, Value<T> max) {
+        Objects.requireNonNull(min);
+        Objects.requireNonNull(max);
+        if (min.isAfter(max)) {
+            throw new IllegalArgumentException("min must not be after max, \nmin: " + min + "\nmax: " + max);
         }
-        this.from = from;
-        this.to = to;
+        this.min = min;
+        this.max = max;
     }
 
     public Value<T> min() {
-        return from;
+        return min;
     }
 
     public Value<T> max() {
-        return to;
+        return max;
     }
 
-    static <X> Range<X> between(Value<X> from, Value<X> to) {
-        return new RangeImpl<>(from, to);
+    static <X> Range<X> between(Value<X> min, Value<X> max) {
+        return new RangeImpl<>(min, max);
     }
 }

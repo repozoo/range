@@ -14,14 +14,14 @@ class YearMonthRangeTest {
     @Test
     void create_neitherStartNorEndAllowedToBeNull() {
 
-        YearMonth from = YearMonth.parse("2021-01");
-        YearMonth to = YearMonth.parse("2021-02");
+        YearMonth min = YearMonth.parse("2021-01");
+        YearMonth max = YearMonth.parse("2021-02");
 
-        assertThatThrownBy(() -> YearMonthRange.between(from, null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> YearMonthRange.between(null, to)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> YearMonthRange.between(min, null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> YearMonthRange.between(null, max)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> YearMonthRange.between(null, null)).isInstanceOf(NullPointerException.class);
 
-        assertDoesNotThrow(() -> YearMonthRange.between(from, to));
+        assertDoesNotThrow(() -> YearMonthRange.between(min, max));
     }
 
     @Test

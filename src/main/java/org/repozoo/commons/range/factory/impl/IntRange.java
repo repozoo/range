@@ -10,8 +10,8 @@ public class IntRange {
 
     private static final RangeFactory.CreateRange<Integer> createRange = createIntRange();
 
-    public static Range<Integer> between(Integer from, Integer to) {
-        return createRange.between(from, to);
+    public static Range<Integer> between(Integer min, Integer max) {
+        return createRange.between(min, max);
     }
 
     public static Range<Integer> singleton(int i) {

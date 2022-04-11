@@ -10,8 +10,8 @@ public class YearMonthRange {
 
     private static final RangeFactory.CreateRange<YearMonth> createRange = createRange();
 
-    public static Range<YearMonth> between(YearMonth from, YearMonth to) {
-        return createRange.between(from, to);
+    public static Range<YearMonth> between(YearMonth min, YearMonth max) {
+        return createRange.between(min, max);
     }
 
     private static RangeFactory.CreateRange<YearMonth> createRange() {
