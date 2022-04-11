@@ -13,18 +13,30 @@ public interface Range<T> extends RangeSet<T> {
     Value<T> min();
     Value<T> max();
 
+    /**
+     * Returns the inclusive start value of this range.
+     */
     default T from() {
         return min().value();
     }
 
+    /**
+     * Returns the inclusive end value of this range.
+     */
     default T to() {
         return max().value();
     }
 
+    /**
+     * Returns true if t lies inside this range.
+     */
     default boolean contains(T t) {
         return min().isBeforeOrEqual(t) && max().isAfterOrEqual(t);
     }
 
+    /**
+     * Returns true if the other {@link Range} lies inside or is equal to this range.
+     */
     default boolean contains(Range<T> other) {
         return contains(other.min()) && contains(other.max());
     }
@@ -41,22 +53,19 @@ public interface Range<T> extends RangeSet<T> {
     }
 
     /**
-     * true if this.max() {@literal <} other.min(), false otherwise.
+     * Returns true if this range ends before the other starts.
      */
     default boolean isBefore(Range<T> other) {
         return max().isBefore(other.min());
     }
 
     /**
-     * true if this.from {@literal >} other.to, false otherwise.
+     * Returns true if this range starts after the other ends.
      */
     default boolean isAfter(Range<T> other) {
         return min().isAfter(other.max());
     }
 
-    /**
-     * Must always be true for a Range.
-     */
     @Override
     default boolean isEmpty() {
         return false;
@@ -67,10 +76,16 @@ public interface Range<T> extends RangeSet<T> {
         return Stream.of(this);
     }
 
+    /**
+     * Returns true if this.min() is before other.min().
+     */
     default boolean startsBefore(Range<T> other) {
         return min().isBefore(other.min());
     }
 
+    /**
+     * Returns true if this.max() is after other.max().
+     */
     default boolean endsAfter(Range<T> other) {
         return max().isAfter(other.max());
     }
@@ -91,6 +106,9 @@ public interface Range<T> extends RangeSet<T> {
         return Range.between(minStart, maxEnd);
     }
 
+    /**
+     * Returns a new {@link Range} between min (inclusive) and max (inclusive).
+     */
     static <X> Range<X> between(Value<X> min, Value<X> max) {
         return RangeImpl.between(min, max);
     }

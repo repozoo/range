@@ -56,14 +56,14 @@ class RangeTest {
 
     @Test
     void distinct() {
-        assertThat(IntRange.between(1, 1).distinct(IntRange.between(2, 2))).isTrue();
-        assertThat(IntRange.between(2, 2).distinct(IntRange.between(1, 1))).isTrue();
+        assertThat(IntRange.between(1, 1).isDistinct(IntRange.between(2, 2))).isTrue();
+        assertThat(IntRange.between(2, 2).isDistinct(IntRange.between(1, 1))).isTrue();
 
-        assertThat(IntRange.between(1, 1).distinct(IntRange.between(1, 1))).isFalse();
-        assertThat(IntRange.between(1, 4).distinct(IntRange.between(2, 3))).isFalse();
-        assertThat(IntRange.between(2, 3).distinct(IntRange.between(1, 4))).isFalse();
-        assertThat(IntRange.between(1, 3).distinct(IntRange.between(2, 4))).isFalse();
-        assertThat(IntRange.between(2, 4).distinct(IntRange.between(1, 3))).isFalse();
+        assertThat(IntRange.between(1, 1).isDistinct(IntRange.between(1, 1))).isFalse();
+        assertThat(IntRange.between(1, 4).isDistinct(IntRange.between(2, 3))).isFalse();
+        assertThat(IntRange.between(2, 3).isDistinct(IntRange.between(1, 4))).isFalse();
+        assertThat(IntRange.between(1, 3).isDistinct(IntRange.between(2, 4))).isFalse();
+        assertThat(IntRange.between(2, 4).isDistinct(IntRange.between(1, 3))).isFalse();
     }
 
     @Test

@@ -8,16 +8,31 @@ import java.util.stream.Stream;
 
 public interface RangeSet<T> {
 
+    /**
+     * Returns a {@link Range} stream containing all ranges of this set<br>
+     * or an empty stream if this {@link RangeSet} is empty.
+     */
     Stream<Range<T>> stream();
 
+
+    /**
+     * Returns true if the following is true for each {@link Range} of others:<br>
+     * At least one {@link Range} of this set contains 'other'.
+     */
     default boolean contains(RangeSet<T> others) {
         return others.stream().allMatch(other -> stream().anyMatch(r -> r.contains(other)));
     }
 
+    /**
+     * Returns true if any {@link Range} of this set intersects with at least one {@link Range} of others.
+     */
     default boolean intersects(RangeSet<T> others) {
         return stream().anyMatch(aRange -> others.stream().anyMatch(aRange::intersects));
     }
 
+    /**
+     * Returns a new RangeSet containing all {@link Range} parts that exist in this and others.
+     */
     default RangeSet<T> intersection(RangeSet<T> others) {
         List<Range<T>> intersections = stream()
                 .map(others::intersection)
@@ -26,7 +41,7 @@ public interface RangeSet<T> {
         return newRangeSet(intersections);
     }
 
-    default boolean distinct(Range<T> other) {
+    default boolean isDistinct(Range<T> other) {
         return !intersects(other);
     }
 
