@@ -70,15 +70,15 @@ public interface RangeSet<T> {
         if (aRange.intersects(subtrahend)) {
             if (subtrahend.contains(aRange)) {
                 return RangeSet.empty();
-            } else if (aRange.contains(subtrahend) && (subtrahend.from().isAfter(aRange.from()) && subtrahend.to().isBefore(aRange.to()))) {
-                Range<T> r1 = RangeImpl.between(aRange.from(), subtrahend.from().previous());
-                Range<T> r2 = RangeImpl.between(subtrahend.to().next(), aRange.to());
+            } else if (aRange.contains(subtrahend) && (subtrahend.min().isAfter(aRange.min()) && subtrahend.max().isBefore(aRange.max()))) {
+                Range<T> r1 = RangeImpl.between(aRange.min(), subtrahend.min().previous());
+                Range<T> r2 = RangeImpl.between(subtrahend.max().next(), aRange.max());
                 return RangeSet.of(r1, r2);
             } else {
-                if (subtrahend.from().isAfter(aRange.from())) {
-                    return RangeImpl.between(aRange.from(), subtrahend.from().previous());
+                if (subtrahend.min().isAfter(aRange.min())) {
+                    return RangeImpl.between(aRange.min(), subtrahend.min().previous());
                 } else {
-                    return RangeImpl.between(subtrahend.to().next(), aRange.to());
+                    return RangeImpl.between(subtrahend.max().next(), aRange.max());
                 }
             }
         } else {
@@ -105,7 +105,7 @@ public interface RangeSet<T> {
     }
 
     static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
-        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::from)).collect(RangeSet.toStack());
+        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::min)).collect(RangeSet.toStack());
         return RangeSet.newRangeSet(stackedRanges);
     }
 

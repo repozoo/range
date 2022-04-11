@@ -26,11 +26,11 @@ class RangeImpl<T> implements Range<T> {
         this.to = to;
     }
 
-    public Value<T> from() {
+    public Value<T> min() {
         return from;
     }
 
-    public Value<T> to() {
+    public Value<T> max() {
         return to;
     }
 

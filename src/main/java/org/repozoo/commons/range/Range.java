@@ -10,9 +10,16 @@ import java.util.stream.Stream;
 
 public interface Range<T> extends RangeSet<T> {
 
-    Value<T> from();
+    Value<T> min();
+    Value<T> max();
 
-    Value<T> to();
+    default T from() {
+        return min().value();
+    }
+
+    default T to() {
+        return max().value();
+    }
 
     @Override
     default boolean intersects(RangeSet<T> others) {
@@ -29,14 +36,14 @@ public interface Range<T> extends RangeSet<T> {
      * True if this.to < other.from, false otherwise.
      */
     default boolean isBefore(Range<T> other) {
-        return to().isBefore(other.from());
+        return max().isBefore(other.min());
     }
 
     /**
      * True if this.from > other.to, false otherwise.
      */
     default boolean isAfter(Range<T> other) {
-        return from().isAfter(other.to());
+        return min().isAfter(other.max());
     }
 
     /**
@@ -53,18 +60,18 @@ public interface Range<T> extends RangeSet<T> {
     }
 
     default boolean startsBefore(Range<T> other) {
-        return from().isBefore(other.from());
+        return min().isBefore(other.min());
     }
 
     default boolean endsAfter(Range<T> other) {
-        return to().isAfter(other.to());
+        return max().isAfter(other.max());
     }
 
     @SafeVarargs
     static <T> Range<T> enclose(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
-        Value<T> minStart = min(Range::from, ranges);
-        Value<T> maxEnd = max(Range::to, ranges);
+        Value<T> minStart = min(Range::min, ranges);
+        Value<T> maxEnd = max(Range::max, ranges);
         return Range.between(minStart, maxEnd);
     }
 
@@ -74,8 +81,8 @@ public interface Range<T> extends RangeSet<T> {
 
     private static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            Value<T> maxStart = max(Range::from, aRange, other);
-            Value<T> minEnd = min(Range::to, aRange, other);
+            Value<T> maxStart = max(Range::min, aRange, other);
+            Value<T> minEnd = min(Range::max, aRange, other);
             return Range.between(maxStart, minEnd);
         } else {
             return RangeSet.empty();
