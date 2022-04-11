@@ -21,9 +21,17 @@ public interface Range<T> extends RangeSet<T> {
         return max().value();
     }
 
+    default boolean contains(T t) {
+        return min().isBeforeOrEqual(t) && max().isAfterOrEqual(t);
+    }
+
+    default boolean contains(Range<T> other) {
+        return contains(other.min()) && contains(other.max());
+    }
+
     @Override
     default boolean intersects(RangeSet<T> others) {
-        return others.stream().anyMatch(other -> !isBefore(other) && !isAfter(other));
+        return others.stream().anyMatch(this::intersects);
     }
 
     @Override
@@ -33,14 +41,14 @@ public interface Range<T> extends RangeSet<T> {
     }
 
     /**
-     * True if this.to < other.from, false otherwise.
+     * true if this.to < other.from, false otherwise.
      */
     default boolean isBefore(Range<T> other) {
         return max().isBefore(other.min());
     }
 
     /**
-     * True if this.from > other.to, false otherwise.
+     * true if this.from > other.to, false otherwise.
      */
     default boolean isAfter(Range<T> other) {
         return min().isAfter(other.max());
@@ -65,6 +73,14 @@ public interface Range<T> extends RangeSet<T> {
 
     default boolean endsAfter(Range<T> other) {
         return max().isAfter(other.max());
+    }
+
+    private boolean contains(Value<T> value) {
+        return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
+    }
+
+    private boolean intersects(Range<T> other) {
+        return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
     }
 
     @SafeVarargs

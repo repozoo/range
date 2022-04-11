@@ -32,6 +32,11 @@ class ValueImpl<T> implements org.repozoo.commons.range.value.Value<T> {
     }
 
     @Override
+    public Value<T> with(T value) {
+        return withValue(value);
+    }
+
+    @Override
     public int compareTo(Value<T> other) {
         return comparator.compare(this.value(), other.value());
     }

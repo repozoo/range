@@ -11,7 +11,7 @@ public interface RangeSet<T> {
     Stream<Range<T>> stream();
 
     default boolean contains(RangeSet<T> others) {
-        return others.stream().allMatch(other -> stream().anyMatch(contains(other)));
+        return others.stream().allMatch(other -> stream().anyMatch(r -> r.contains(other)));
     }
 
     default boolean intersects(RangeSet<T> others) {
@@ -60,10 +60,6 @@ public interface RangeSet<T> {
 
     default List<Range<T>> getRanges() {
         return stream().collect(Collectors.toList());
-    }
-
-    private Predicate<Range<T>> contains(Range<T> other) {
-        return range -> !other.startsBefore(range) && !other.endsAfter(range);
     }
 
     private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> subtrahend) {
