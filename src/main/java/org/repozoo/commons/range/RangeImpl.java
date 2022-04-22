@@ -6,12 +6,16 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.repozoo.commons.range.value.Value;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @ToString
 @FieldDefaults(makeFinal=true, level= AccessLevel.PRIVATE)
 @EqualsAndHashCode
-class RangeImpl<T> implements Range<T> {
+public class RangeImpl<T> implements RangeSet<T> {
 
     Value<T> min;
     Value<T> max;
@@ -26,6 +30,38 @@ class RangeImpl<T> implements Range<T> {
         this.max = max;
     }
 
+    /**
+     * Returns a {@link RangeImpl} that surrounds all ranges<br>
+     * example: enclose([1-3], [5-8]) -> [1-8]
+     */
+    @SafeVarargs
+    public static <T> RangeImpl<T> sourround(RangeImpl<T>... ranges) {
+        Objects.requireNonNull(ranges);
+        Value<T> minStart = min(RangeImpl::min, ranges);
+        Value<T> maxEnd = max(RangeImpl::max, ranges);
+        return RangeImpl.between(minStart, maxEnd);
+    }
+
+    public static <T> RangeSet<T> intersection(RangeImpl<T> aRange, RangeImpl<T> other) {
+        if (aRange.intersects(other)) {
+            Value<T> maxStart = max(RangeImpl::min, aRange, other);
+            Value<T> minEnd = min(RangeImpl::max, aRange, other);
+            return RangeImpl.between(maxStart, minEnd);
+        } else {
+            return RangeSet.empty();
+        }
+    }
+
+    @SafeVarargs
+    public static <T> Value<T> min(Function<RangeImpl<T>, Value<T>> extraction, RangeImpl<T>... ranges) {
+        return Arrays.stream(ranges).min(Comparator.comparing(extraction)).map(extraction).orElseThrow();
+    }
+
+    @SafeVarargs
+    public static <T> Value<T> max(Function<RangeImpl<T>, Value<T>> extraction, RangeImpl<T>... ranges) {
+        return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
+    }
+
     public Value<T> min() {
         return min;
     }
@@ -34,7 +70,95 @@ class RangeImpl<T> implements Range<T> {
         return max;
     }
 
-    static <X> Range<X> between(Value<X> min, Value<X> max) {
+    public static <X> RangeImpl<X> between(Value<X> min, Value<X> max) {
         return new RangeImpl<>(min, max);
+    }
+
+    /**
+     * Returns the inclusive start value of this range.
+     */
+    public T from() {
+        return min().value();
+    }
+
+    /**
+     * Returns the inclusive end value of this range.
+     */
+    public T to() {
+        return max().value();
+    }
+
+    /**
+     * Returns true if t lies inside this range.
+     */
+    public boolean contains(T t) {
+        return min().isBeforeOrEqual(t) && max().isAfterOrEqual(t);
+    }
+
+    /**
+     * Returns true if the other {@link RangeImpl} lies inside or is equal to this range.
+     */
+    public boolean contains(RangeImpl<T> other) {
+        return contains(other.min()) && contains(other.max());
+    }
+
+    /**
+     * Returns true if any {@link RangeImpl} of others intersects with this {@link RangeImpl}.
+     */
+    @Override
+    public boolean intersects(RangeSet<T> others) {
+        return others.stream().anyMatch(this::intersects);
+    }
+
+    @Override
+    public RangeSet<T> intersection(RangeSet<T> others) {
+        return others.stream().map(other -> RangeImpl.intersection(this, other))
+                .reduce(RangeSet.empty(), RangeSet::sum);
+    }
+
+    /**
+     * Returns true if this range ends before the other starts.
+     */
+    public boolean isBefore(RangeImpl<T> other) {
+        return max().isBefore(other.min());
+    }
+
+    /**
+     * Returns true if this range starts after the other ends.
+     */
+    public boolean isAfter(RangeImpl<T> other) {
+        return min().isAfter(other.max());
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public Stream<RangeImpl<T>> stream() {
+        return Stream.of(this);
+    }
+
+    /**
+     * Returns true if this.min() is before other.min().
+     */
+    public boolean startsBefore(RangeImpl<T> other) {
+        return min().isBefore(other.min());
+    }
+
+    /**
+     * Returns true if this.max() is after other.max().
+     */
+    public boolean endsAfter(RangeImpl<T> other) {
+        return max().isAfter(other.max());
+    }
+
+    public boolean contains(Value<T> value) {
+        return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
+    }
+
+    public boolean intersects(RangeImpl<T> other) {
+        return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
     }
 }
