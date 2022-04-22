@@ -1,6 +1,6 @@
 package org.repozoo.commons.range.factory.impl;
 
-import org.repozoo.commons.range.RangeImpl;
+import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.factory.RangeFactory;
 
 import java.time.YearMonth;
@@ -10,7 +10,7 @@ public class YearMonthRange {
 
     private static final RangeFactory.CreateRange<YearMonth> createRange = createRange();
 
-    public static RangeImpl<YearMonth> between(YearMonth min, YearMonth max) {
+    public static Range<YearMonth> between(YearMonth min, YearMonth max) {
         return createRange.between(min, max);
     }
 

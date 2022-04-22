@@ -1,6 +1,6 @@
 package org.repozoo.commons.range.factory;
 
-import org.repozoo.commons.range.RangeImpl;
+import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.ValueIterator;
 import org.repozoo.commons.range.value.Value;
 
@@ -10,7 +10,7 @@ import java.util.function.UnaryOperator;
 public class RangeFactory {
 
     public interface CreateRange<T> {
-        RangeImpl<T> between(T min, T max);
+        Range<T> between(T min, T max);
     }
 
     @SuppressWarnings("unused")
@@ -40,7 +40,7 @@ public class RangeFactory {
             return (from, to) -> {
                 Value<Y> min = Value.of(from, iterator, comparator);
                 Value<Y> max = Value.of(to, iterator, comparator);
-                return RangeImpl.between(min, max);
+                return Range.between(min, max);
             };
         }
     }

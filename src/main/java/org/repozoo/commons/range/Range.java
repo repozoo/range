@@ -15,12 +15,12 @@ import java.util.stream.Stream;
 @ToString
 @FieldDefaults(makeFinal=true, level= AccessLevel.PRIVATE)
 @EqualsAndHashCode
-public class RangeImpl<T> implements RangeSet<T> {
+public class Range<T> implements RangeSet<T> {
 
     Value<T> min;
     Value<T> max;
 
-    private RangeImpl(Value<T> min, Value<T> max) {
+    private Range(Value<T> min, Value<T> max) {
         Objects.requireNonNull(min);
         Objects.requireNonNull(max);
         if (min.isAfter(max)) {
@@ -31,34 +31,34 @@ public class RangeImpl<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns a {@link RangeImpl} that surrounds all ranges<br>
+     * Returns a {@link Range} that surrounds all ranges<br>
      * example: enclose([1-3], [5-8]) -> [1-8]
      */
     @SafeVarargs
-    public static <T> RangeImpl<T> sourround(RangeImpl<T>... ranges) {
+    public static <T> Range<T> sourround(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
-        Value<T> minStart = min(RangeImpl::min, ranges);
-        Value<T> maxEnd = max(RangeImpl::max, ranges);
-        return RangeImpl.between(minStart, maxEnd);
+        Value<T> minStart = min(Range::min, ranges);
+        Value<T> maxEnd = max(Range::max, ranges);
+        return Range.between(minStart, maxEnd);
     }
 
-    public static <T> RangeSet<T> intersection(RangeImpl<T> aRange, RangeImpl<T> other) {
+    public static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            Value<T> maxStart = max(RangeImpl::min, aRange, other);
-            Value<T> minEnd = min(RangeImpl::max, aRange, other);
-            return RangeImpl.between(maxStart, minEnd);
+            Value<T> maxStart = max(Range::min, aRange, other);
+            Value<T> minEnd = min(Range::max, aRange, other);
+            return Range.between(maxStart, minEnd);
         } else {
             return RangeSet.empty();
         }
     }
 
     @SafeVarargs
-    public static <T> Value<T> min(Function<RangeImpl<T>, Value<T>> extraction, RangeImpl<T>... ranges) {
+    public static <T> Value<T> min(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
         return Arrays.stream(ranges).min(Comparator.comparing(extraction)).map(extraction).orElseThrow();
     }
 
     @SafeVarargs
-    public static <T> Value<T> max(Function<RangeImpl<T>, Value<T>> extraction, RangeImpl<T>... ranges) {
+    public static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
         return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
     }
 
@@ -70,8 +70,8 @@ public class RangeImpl<T> implements RangeSet<T> {
         return max;
     }
 
-    public static <X> RangeImpl<X> between(Value<X> min, Value<X> max) {
-        return new RangeImpl<>(min, max);
+    public static <X> Range<X> between(Value<X> min, Value<X> max) {
+        return new Range<>(min, max);
     }
 
     /**
@@ -96,14 +96,14 @@ public class RangeImpl<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns true if the other {@link RangeImpl} lies inside or is equal to this range.
+     * Returns true if the other {@link Range} lies inside or is equal to this range.
      */
-    public boolean contains(RangeImpl<T> other) {
+    public boolean contains(Range<T> other) {
         return contains(other.min()) && contains(other.max());
     }
 
     /**
-     * Returns true if any {@link RangeImpl} of others intersects with this {@link RangeImpl}.
+     * Returns true if any {@link Range} of others intersects with this {@link Range}.
      */
     @Override
     public boolean intersects(RangeSet<T> others) {
@@ -112,21 +112,21 @@ public class RangeImpl<T> implements RangeSet<T> {
 
     @Override
     public RangeSet<T> intersection(RangeSet<T> others) {
-        return others.stream().map(other -> RangeImpl.intersection(this, other))
+        return others.stream().map(other -> Range.intersection(this, other))
                 .reduce(RangeSet.empty(), RangeSet::sum);
     }
 
     /**
      * Returns true if this range ends before the other starts.
      */
-    public boolean isBefore(RangeImpl<T> other) {
+    public boolean isBefore(Range<T> other) {
         return max().isBefore(other.min());
     }
 
     /**
      * Returns true if this range starts after the other ends.
      */
-    public boolean isAfter(RangeImpl<T> other) {
+    public boolean isAfter(Range<T> other) {
         return min().isAfter(other.max());
     }
 
@@ -136,21 +136,21 @@ public class RangeImpl<T> implements RangeSet<T> {
     }
 
     @Override
-    public Stream<RangeImpl<T>> stream() {
+    public Stream<Range<T>> stream() {
         return Stream.of(this);
     }
 
     /**
      * Returns true if this.min() is before other.min().
      */
-    public boolean startsBefore(RangeImpl<T> other) {
+    public boolean startsBefore(Range<T> other) {
         return min().isBefore(other.min());
     }
 
     /**
      * Returns true if this.max() is after other.max().
      */
-    public boolean endsAfter(RangeImpl<T> other) {
+    public boolean endsAfter(Range<T> other) {
         return max().isAfter(other.max());
     }
 
@@ -158,7 +158,7 @@ public class RangeImpl<T> implements RangeSet<T> {
         return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
     }
 
-    public boolean intersects(RangeImpl<T> other) {
+    public boolean intersects(Range<T> other) {
         return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
     }
 }

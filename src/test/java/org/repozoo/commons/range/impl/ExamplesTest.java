@@ -1,6 +1,6 @@
 package org.repozoo.commons.range.impl;
 
-import org.repozoo.commons.range.RangeImpl;
+import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.factory.RangeFactory;
 import org.repozoo.commons.range.factory.impl.LocalDateRange;
 import org.repozoo.commons.range.RangeSet;
@@ -28,7 +28,7 @@ class ExamplesTest {
         // use the factory
         YearMonth jan = YearMonth.parse("2022-01");
         YearMonth dec = YearMonth.parse("2022-12");
-        RangeImpl<YearMonth> range = createRange.between(jan, dec);
+        Range<YearMonth> range = createRange.between(jan, dec);
     }
 
     @Test
@@ -61,7 +61,7 @@ class ExamplesTest {
     void remove_example() {
         // Assing
         YearMonth dec2021 = YearMonth.parse("2021-12");
-        RangeImpl<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
+        Range<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
         RangeSet<LocalDate> vacationSahrah = RangeSet.of(
                 LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
                 LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),

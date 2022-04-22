@@ -12,7 +12,7 @@ public interface RangeSet<T> {
      * Returns a {@link Range} stream containing all ranges of this set<br>
      * or an empty stream if this {@link RangeSet} is empty.
      */
-    Stream<RangeImpl<T>> stream();
+    Stream<Range<T>> stream();
 
 
     /**
@@ -34,14 +34,14 @@ public interface RangeSet<T> {
      * Returns a new RangeSet containing all {@link Range} parts that exist in this and others.
      */
     default RangeSet<T> intersection(RangeSet<T> others) {
-        List<RangeImpl<T>> intersections = stream()
+        List<Range<T>> intersections = stream()
                 .map(others::intersection)
                 .flatMap(RangeSet::stream)
                 .collect(Collectors.toList());
         return newRangeSet(intersections);
     }
 
-    default boolean isDistinct(RangeImpl<T> other) {
+    default boolean isDistinct(Range<T> other) {
         return !intersects(other);
     }
 
@@ -50,13 +50,13 @@ public interface RangeSet<T> {
     }
 
     default RangeSet<T> remove(RangeSet<T> others) {
-        List<RangeImpl<T>> newRanges = new ArrayList<>();
+        List<Range<T>> newRanges = new ArrayList<>();
         getRanges().forEach(range -> {
-            Stack<RangeImpl<T>> stack = new Stack<>();
+            Stack<Range<T>> stack = new Stack<>();
             stack.push(range);
             others.stream().forEach(other -> {
                 if (!stack.isEmpty()) {
-                    RangeImpl<T> topRange = stack.pop();
+                    Range<T> topRange = stack.pop();
                     RangeSet<T> result = RangeSet.remove(topRange, other);
                     result.stream().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
@@ -73,23 +73,23 @@ public interface RangeSet<T> {
         return getRanges().isEmpty();
     }
 
-    default List<RangeImpl<T>> getRanges() {
+    default List<Range<T>> getRanges() {
         return stream().collect(Collectors.toList());
     }
 
-    private static <T> RangeSet<T> remove(RangeImpl<T> aRange, RangeImpl<T> toRemove) {
+    private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
         if (aRange.intersects(toRemove)) {
             if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
                 return RangeSet.empty();
             } else if (aRange.contains(toRemove) && (toRemove.min().isAfter(aRange.min()) && toRemove.max().isBefore(aRange.max()))) {
-                RangeImpl<T> r1 = RangeImpl.between(aRange.min(), toRemove.min().previous());
-                RangeImpl<T> r2 = RangeImpl.between(toRemove.max().next(), aRange.max());
+                Range<T> r1 = Range.between(aRange.min(), toRemove.min().previous());
+                Range<T> r2 = Range.between(toRemove.max().next(), aRange.max());
                 return RangeSet.of(r1, r2);
             } else {
                 if (toRemove.min().isAfter(aRange.min())) {
-                    return RangeImpl.between(aRange.min(), toRemove.min().previous());
+                    return Range.between(aRange.min(), toRemove.min().previous());
                 } else {
-                    return RangeImpl.between(toRemove.max().next(), aRange.max());
+                    return Range.between(toRemove.max().next(), aRange.max());
                 }
             }
         } else {
@@ -102,57 +102,57 @@ public interface RangeSet<T> {
     }
 
     @SafeVarargs
-    static <T> RangeSet<T> of(RangeImpl<T>... ranges) {
+    static <T> RangeSet<T> of(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
         return normalize(Arrays.stream(ranges));
     }
 
-    static <T> RangeSet<T> normalize(Stream<RangeImpl<T>> rangeStream) {
-        Stack<RangeImpl<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(RangeImpl::min)).collect(RangeSet.toStack());
+    static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
+        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::min)).collect(RangeSet.toStack());
         return newRangeSet(stackedRanges);
     }
 
-    static <T> RangeSet<T> add(RangeImpl<T> aRange, RangeImpl<T> other) {
+    static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            return RangeImpl.sourround(aRange, other);
+            return Range.sourround(aRange, other);
         } else {
             return newRangeSet(aRange, other);
         }
     }
 
     static <T> RangeSet<T> sum(RangeSet<T> set1, RangeSet<T> set2) {
-        Stream<RangeImpl<T>> rangeStream = Stream.concat(set1.stream(), set2.stream());
+        Stream<Range<T>> rangeStream = Stream.concat(set1.stream(), set2.stream());
         return RangeSet.normalize(rangeStream);
     }
 
     static String toString(RangeSet<?> rangeSet) {
-        return rangeSet.stream().map(RangeImpl::toString).collect(Collectors.joining("\n"));
+        return rangeSet.stream().map(Range::toString).collect(Collectors.joining("\n"));
     }
 
-    private static <T> RangeSet<T> newRangeSet(Collection<RangeImpl<T>> ranges) {
+    private static <T> RangeSet<T> newRangeSet(Collection<Range<T>> ranges) {
         return ranges::stream;
     }
 
     @SafeVarargs
-    private static <T> RangeSet<T> newRangeSet(RangeImpl<T>... ranges) {
+    private static <T> RangeSet<T> newRangeSet(Range<T>... ranges) {
         return Arrays.asList(ranges)::stream;
     }
 
-    private static <T> Collector<RangeImpl<T>, Stack<RangeImpl<T>>, Stack<RangeImpl<T>>> toStack() {
+    private static <T> Collector<Range<T>, Stack<Range<T>>, Stack<Range<T>>> toStack() {
         return Collector.of(Stack::new, RangeSet::addOnTop, RangeSet::mergeStacks);
     }
 
-    private static <T> void addOnTop(Stack<RangeImpl<T>> stack, RangeImpl<T> range) {
+    private static <T> void addOnTop(Stack<Range<T>> stack, Range<T> range) {
         if (stack.isEmpty()) {
             stack.push(range);
         } else {
-            RangeImpl<T> topRange = stack.pop();
+            Range<T> topRange = stack.pop();
             RangeSet<T> sum = add(topRange, range);
             sum.getRanges().forEach(stack::push);
         }
     }
 
-    private static <T> Stack<RangeImpl<T>> mergeStacks(Stack<RangeImpl<T>> stack1, Stack<RangeImpl<T>> stack2) {
+    private static <T> Stack<Range<T>> mergeStacks(Stack<Range<T>> stack1, Stack<Range<T>> stack2) {
         throw new UnsupportedOperationException("TODO implement ...");
     }
 }
