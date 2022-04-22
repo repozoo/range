@@ -52,16 +52,6 @@ public class Range<T> implements RangeSet<T> {
         }
     }
 
-    @SafeVarargs
-    public static <T> Value<T> min(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
-        return Arrays.stream(ranges).min(Comparator.comparing(extraction)).map(extraction).orElseThrow();
-    }
-
-    @SafeVarargs
-    public static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
-        return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
-    }
-
     public Value<T> min() {
         return min;
     }
@@ -160,5 +150,15 @@ public class Range<T> implements RangeSet<T> {
 
     public boolean intersects(Range<T> other) {
         return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
+    }
+
+    @SafeVarargs
+    private static <T> Value<T> min(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
+        return Arrays.stream(ranges).min(Comparator.comparing(extraction)).map(extraction).orElseThrow();
+    }
+
+    @SafeVarargs
+    private static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
+        return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
     }
 }
