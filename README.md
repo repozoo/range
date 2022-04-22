@@ -14,7 +14,6 @@ helping to work with range(s) or interval(s).
         + [custom RangeFactory - Example](#custom-rangefactory---example)
     * [Maven](#maven)
 - [Architecture](#architecture)
-    * [API](#api)
 
 ## Usage
 You can either
@@ -131,11 +130,10 @@ Example: Imagine
 
 Therefore `RangeSet` is the main building bloc.<br>
 The type `Range` is just a special `RangeSet` containing exactly one `Range`<br>
-and the two `Value`s `from` and `to` _(inclusive)_.
+and the two `Value`s `from` and `to` _(inclusive)_.<br>
+`RangeSet` as well as `Range` are both _immutable_.
 
 <img src="./documentation/images/range-and-rangeset-uml.svg" alt="range-uml">
 
-
-### API
-Most important ones
+Most important operations
 <img src="./documentation/images/range-API.svg" alt="range-api">
