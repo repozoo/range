@@ -79,17 +79,17 @@ public interface RangeSet<T> {
 
     private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
         if (aRange.intersects(toRemove)) {
-            if (toRemove.contains(aRange)) {
+            if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
                 return RangeSet.empty();
             } else if (aRange.contains(toRemove) && (toRemove.min().isAfter(aRange.min()) && toRemove.max().isBefore(aRange.max()))) {
-                Range<T> r1 = RangeImpl.between(aRange.min(), toRemove.min().previous());
-                Range<T> r2 = RangeImpl.between(toRemove.max().next(), aRange.max());
+                Range<T> r1 = Range.between(aRange.min(), toRemove.min().previous());
+                Range<T> r2 = Range.between(toRemove.max().next(), aRange.max());
                 return RangeSet.of(r1, r2);
             } else {
                 if (toRemove.min().isAfter(aRange.min())) {
-                    return RangeImpl.between(aRange.min(), toRemove.min().previous());
+                    return Range.between(aRange.min(), toRemove.min().previous());
                 } else {
-                    return RangeImpl.between(toRemove.max().next(), aRange.max());
+                    return Range.between(toRemove.max().next(), aRange.max());
                 }
             }
         } else {
