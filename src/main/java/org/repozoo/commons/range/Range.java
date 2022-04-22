@@ -120,7 +120,7 @@ public interface Range<T> extends RangeSet<T> {
     }
 
     /**
-     * Returns a new {@link Range} between min (inclusive) and max (inclusive).
+     * Returns a new {@link Range} between min and max (inclusive).
      */
     static <X> Range<X> between(Value<X> min, Value<X> max) {
         return RangeImpl.between(min, max);
