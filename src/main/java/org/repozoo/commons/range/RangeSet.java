@@ -122,7 +122,7 @@ public interface RangeSet<T> {
 
     static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            return Range.enclose(aRange, other);
+            return Range.sourround(aRange, other);
         } else {
             return RangeSet.newRangeSet(List.of(aRange, other));
         }

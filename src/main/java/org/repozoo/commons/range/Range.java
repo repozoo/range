@@ -10,7 +10,13 @@ import java.util.stream.Stream;
 
 public interface Range<T> extends RangeSet<T> {
 
+    /**
+     * Returns the minimal (inclusive) value of this {@link Range}
+     */
     Value<T> min();
+    /**
+     * Returns the maximal (inclusive) value of this {@link Range}
+     */
     Value<T> max();
 
     /**
@@ -41,6 +47,9 @@ public interface Range<T> extends RangeSet<T> {
         return contains(other.min()) && contains(other.max());
     }
 
+    /**
+     * Returns true if any {@link Range} of others intersects with this {@link Range}.
+     */
     @Override
     default boolean intersects(RangeSet<T> others) {
         return others.stream().anyMatch(this::intersects);
@@ -98,8 +107,12 @@ public interface Range<T> extends RangeSet<T> {
         return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
     }
 
+    /**
+     * Returns a {@link Range} that surrounds all ranges<br>
+     * example: enclose([1-3], [5-8]) -> [1-8]
+     */
     @SafeVarargs
-    static <T> Range<T> enclose(Range<T>... ranges) {
+    static <T> Range<T> sourround(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
         Value<T> minStart = min(Range::min, ranges);
         Value<T> maxEnd = max(Range::max, ranges);
