@@ -1,3 +1,6 @@
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+![JDK](https://img.shields.io/badge/jdk-11-yellowgreen.svg)
+
 # range
 - - - -
 Range is a small java library,<br>
