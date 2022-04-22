@@ -77,19 +77,19 @@ public interface RangeSet<T> {
         return stream().collect(Collectors.toList());
     }
 
-    private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> subtrahend) {
-        if (aRange.intersects(subtrahend)) {
-            if (subtrahend.contains(aRange)) {
+    private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
+        if (aRange.intersects(toRemove)) {
+            if (toRemove.contains(aRange)) {
                 return RangeSet.empty();
-            } else if (aRange.contains(subtrahend) && (subtrahend.min().isAfter(aRange.min()) && subtrahend.max().isBefore(aRange.max()))) {
-                Range<T> r1 = RangeImpl.between(aRange.min(), subtrahend.min().previous());
-                Range<T> r2 = RangeImpl.between(subtrahend.max().next(), aRange.max());
+            } else if (aRange.contains(toRemove) && (toRemove.min().isAfter(aRange.min()) && toRemove.max().isBefore(aRange.max()))) {
+                Range<T> r1 = RangeImpl.between(aRange.min(), toRemove.min().previous());
+                Range<T> r2 = RangeImpl.between(toRemove.max().next(), aRange.max());
                 return RangeSet.of(r1, r2);
             } else {
-                if (subtrahend.min().isAfter(aRange.min())) {
-                    return RangeImpl.between(aRange.min(), subtrahend.min().previous());
+                if (toRemove.min().isAfter(aRange.min())) {
+                    return RangeImpl.between(aRange.min(), toRemove.min().previous());
                 } else {
-                    return RangeImpl.between(subtrahend.max().next(), aRange.max());
+                    return RangeImpl.between(toRemove.max().next(), aRange.max());
                 }
             }
         } else {
@@ -107,29 +107,35 @@ public interface RangeSet<T> {
         return normalize(Arrays.stream(ranges));
     }
 
-    static <T> RangeSet<T> newRangeSet(Collection<Range<T>> ranges) {
-        return ranges::stream;
-    }
-
-    static String toString(RangeSet<?> rangeSet) {
-        return rangeSet.stream().map(Range::toString).collect(Collectors.joining("\n"));
-    }
-
     static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
         Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::min)).collect(RangeSet.toStack());
-        return RangeSet.newRangeSet(stackedRanges);
+        return newRangeSet(stackedRanges);
     }
 
     static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
             return Range.sourround(aRange, other);
         } else {
-            return RangeSet.newRangeSet(List.of(aRange, other));
+            return newRangeSet(aRange, other);
         }
     }
 
     static <T> RangeSet<T> sum(RangeSet<T> set1, RangeSet<T> set2) {
-        return RangeSet.normalize(Stream.concat(set1.stream(), set2.stream()));
+        Stream<Range<T>> rangeStream = Stream.concat(set1.stream(), set2.stream());
+        return RangeSet.normalize(rangeStream);
+    }
+
+    static String toString(RangeSet<?> rangeSet) {
+        return rangeSet.stream().map(Range::toString).collect(Collectors.joining("\n"));
+    }
+
+    private static <T> RangeSet<T> newRangeSet(Collection<Range<T>> ranges) {
+        return ranges::stream;
+    }
+
+    @SafeVarargs
+    private static <T> RangeSet<T> newRangeSet(Range<T>... ranges) {
+        return Arrays.asList(ranges)::stream;
     }
 
     private static <T> Collector<Range<T>, Stack<Range<T>>, Stack<Range<T>>> toStack() {
@@ -142,7 +148,7 @@ public interface RangeSet<T> {
         } else {
             Range<T> topRange = stack.pop();
             RangeSet<T> sum = add(topRange, range);
-            sum.stream().forEach(stack::push);
+            sum.getRanges().forEach(stack::push);
         }
     }
 
