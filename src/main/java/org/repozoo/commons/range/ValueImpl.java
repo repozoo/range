@@ -1,6 +1,5 @@
-package org.repozoo.commons.range.value;
+package org.repozoo.commons.range;
 
-import org.repozoo.commons.range.ValueIterator;
 import lombok.*;
 
 import java.util.Comparator;
@@ -9,7 +8,7 @@ import java.util.Comparator;
 @AllArgsConstructor
 @EqualsAndHashCode
 @With(AccessLevel.PRIVATE)
-class ValueImpl<T> implements org.repozoo.commons.range.value.Value<T> {
+class ValueImpl<T> implements Value<T> {
 
     T value;
     @ToString.Exclude
@@ -23,11 +22,11 @@ class ValueImpl<T> implements org.repozoo.commons.range.value.Value<T> {
         return value;
     }
 
-    public org.repozoo.commons.range.value.Value<T> next() {
+    public Value<T> next() {
         return withValue(iterator.next(value));
     }
 
-    public org.repozoo.commons.range.value.Value<T> previous() {
+    public Value<T> previous() {
         return withValue(iterator.previous(value));
     }
 

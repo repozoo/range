@@ -1,6 +1,4 @@
-package org.repozoo.commons.range.value;
-
-import org.repozoo.commons.range.ValueIterator;
+package org.repozoo.commons.range;
 
 import java.util.Comparator;
 

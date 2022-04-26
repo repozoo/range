@@ -1,9 +1,5 @@
 package org.repozoo.commons.range;
 
-import org.repozoo.commons.range.Range;
-import org.repozoo.commons.range.ValueIterator;
-import org.repozoo.commons.range.value.Value;
-
 import java.util.Comparator;
 import java.util.function.UnaryOperator;
 

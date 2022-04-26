@@ -1,7 +1,6 @@
 package org.repozoo.commons.range;
 
 import lombok.EqualsAndHashCode;
-import org.repozoo.commons.range.value.Value;
 
 import java.util.Arrays;
 import java.util.Comparator;
