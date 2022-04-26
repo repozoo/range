@@ -1,9 +1,7 @@
 package org.repozoo.commons.range;
 
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.FieldDefaults;
 import org.repozoo.commons.range.value.Value;
 
 import java.util.Arrays;
@@ -13,12 +11,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @ToString
-@FieldDefaults(makeFinal=true, level= AccessLevel.PRIVATE)
 @EqualsAndHashCode
 public class Range<T> implements RangeSet<T> {
 
-    Value<T> min;
-    Value<T> max;
+    private final Value<T> min;
+    private final Value<T> max;
 
     private Range(Value<T> min, Value<T> max) {
         Objects.requireNonNull(min);
@@ -55,8 +52,8 @@ public class Range<T> implements RangeSet<T> {
     /**
      * Returns true if t lies inside this range.
      */
-    public boolean contains(T t) {
-        return min().isBeforeOrEqual(t) && max().isAfterOrEqual(t);
+    public boolean contains(T value) {
+        return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
     }
 
     /**
