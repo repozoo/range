@@ -30,38 +30,12 @@ public class Range<T> implements RangeSet<T> {
         this.max = max;
     }
 
-    /**
-     * Returns a {@link Range} that surrounds all ranges<br>
-     * example: enclose([1-3], [5-8]) -> [1-8]
-     */
-    @SafeVarargs
-    public static <T> Range<T> sourround(Range<T>... ranges) {
-        Objects.requireNonNull(ranges);
-        Value<T> minStart = min(Range::min, ranges);
-        Value<T> maxEnd = max(Range::max, ranges);
-        return Range.between(minStart, maxEnd);
-    }
-
-    public static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
-        if (aRange.intersects(other)) {
-            Value<T> maxStart = max(Range::min, aRange, other);
-            Value<T> minEnd = min(Range::max, aRange, other);
-            return Range.between(maxStart, minEnd);
-        } else {
-            return RangeSet.empty();
-        }
-    }
-
-    public Value<T> min() {
+    Value<T> min() {
         return min;
     }
 
-    public Value<T> max() {
+    Value<T> max() {
         return max;
-    }
-
-    public static <X> Range<X> between(Value<X> min, Value<X> max) {
-        return new Range<>(min, max);
     }
 
     /**
@@ -144,12 +118,38 @@ public class Range<T> implements RangeSet<T> {
         return max().isAfter(other.max());
     }
 
-    public boolean contains(Value<T> value) {
+    boolean intersects(Range<T> other) {
+        return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
+    }
+
+    private boolean contains(Value<T> value) {
         return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
     }
 
-    public boolean intersects(Range<T> other) {
-        return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
+    public static <X> Range<X> between(Value<X> min, Value<X> max) {
+        return new Range<>(min, max);
+    }
+
+    /**
+     * Returns a {@link Range} that surrounds all ranges<br>
+     * example: enclose([1-3], [5-8]) -> [1-8]
+     */
+    @SafeVarargs
+    public static <T> Range<T> sourround(Range<T>... ranges) {
+        Objects.requireNonNull(ranges);
+        Value<T> minStart = min(Range::min, ranges);
+        Value<T> maxEnd = max(Range::max, ranges);
+        return Range.between(minStart, maxEnd);
+    }
+
+    private static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
+        if (aRange.intersects(other)) {
+            Value<T> maxStart = max(Range::min, aRange, other);
+            Value<T> minEnd = min(Range::max, aRange, other);
+            return Range.between(maxStart, minEnd);
+        } else {
+            return RangeSet.empty();
+        }
     }
 
     @SafeVarargs
