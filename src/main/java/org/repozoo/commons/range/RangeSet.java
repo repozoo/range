@@ -41,6 +41,9 @@ public interface RangeSet<T> {
         return newRangeSet(intersections);
     }
 
+    /**
+     * Returns true if this and other {@link Range} do not intersect..
+     */
     default boolean isDistinct(Range<T> other) {
         return !intersects(other);
     }
