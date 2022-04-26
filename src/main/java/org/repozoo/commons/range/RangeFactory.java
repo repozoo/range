@@ -34,8 +34,8 @@ public class RangeFactory {
 
         public CreateRange<Y> build() {
             return (from, to) -> {
-                Value<Y> min = Value.of(from, iterator, comparator);
-                Value<Y> max = Value.of(to, iterator, comparator);
+                Value<Y> min = new Value(from, iterator, comparator);
+                Value<Y> max = new Value(to, iterator, comparator);
                 return Range.between(min, max);
             };
         }

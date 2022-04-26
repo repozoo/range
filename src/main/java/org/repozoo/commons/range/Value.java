@@ -1,54 +1,74 @@
 package org.repozoo.commons.range;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+
 import java.util.Comparator;
 
-interface Value<X> extends Comparable<Value<X>> {
+@EqualsAndHashCode
+@AllArgsConstructor
+class Value<X> implements Comparable<Value<X>> {
 
-    X value();
-    Value<X> next();
-    Value<X> previous();
+    private final X value;
+    private final ValueIterator<X> iterator;
+    private final Comparator<X> comparator;
 
-    Value<X> with(X value);
+    @Override
+    public int compareTo(Value<X> other) {
+        return comparator.compare(value, other.value());
+    }
 
-    default boolean isAfter(Value<X> other) {
+    public X value() {
+        return value;
+    }
+
+    public Value<X> next() {
+        return with(iterator.next(value));
+    }
+
+    public Value<X> previous() {
+        return with(iterator.previous(value));
+    }
+
+    public Value<X> with(X value) {
+        return new Value<>(value, iterator, comparator);
+    }
+
+    public boolean isAfter(Value<X> other) {
         return this.compareTo(other) > 0;
     }
 
-    default boolean isAfter(X x) {
+    public boolean isAfter(X x) {
         Value<X> other = with(x);
         return this.isAfter(other);
     }
 
-    default boolean isAfterOrEqual(Value<X> other) {
+    public boolean isAfterOrEqual(Value<X> other) {
         int i = this.compareTo(other);
         return i > 0 || i == 0;
     }
 
-    default boolean isAfterOrEqual(X x) {
+    public boolean isAfterOrEqual(X x) {
         Value<X> other = with(x);
         return this.isAfterOrEqual(other);
     }
 
-    default boolean isBefore(Value<X> other) {
+    public boolean isBefore(Value<X> other) {
         return this.compareTo(other) < 0;
     }
 
-    default boolean isBefore(X x) {
+    public boolean isBefore(X x) {
         Value<X> other = with(x);
         return this.isBefore(other);
     }
 
-    default boolean isBeforeOrEqual(Value<X> other) {
+    public boolean isBeforeOrEqual(Value<X> other) {
         int i = this.compareTo(other);
         return i < 0 || i == 0;
     }
 
-    default boolean isBeforeOrEqual(X x) {
+    public boolean isBeforeOrEqual(X x) {
         Value<X> other = this.with(x);
         return this.isAfterOrEqual(other);
-    }
-
-    static <X> Value<X> of(X x, ValueIterator<X> iterator, Comparator<X> comparator) {
-        return new ValueImpl<>(x, iterator, comparator);
     }
 }
