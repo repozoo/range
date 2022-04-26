@@ -126,10 +126,6 @@ public class Range<T> implements RangeSet<T> {
         return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
     }
 
-    public static <X> Range<X> between(Value<X> min, Value<X> max) {
-        return new Range<>(min, max);
-    }
-
     /**
      * Returns a {@link Range} that surrounds all ranges<br>
      * example: enclose([1-3], [5-8]) -> [1-8]
@@ -140,6 +136,10 @@ public class Range<T> implements RangeSet<T> {
         Value<T> minStart = min(Range::min, ranges);
         Value<T> maxEnd = max(Range::max, ranges);
         return Range.between(minStart, maxEnd);
+    }
+
+    public static <X> Range<X> between(Value<X> min, Value<X> max) {
+        return new Range<>(min, max);
     }
 
     private static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {

@@ -1,7 +1,7 @@
 package org.repozoo.commons.range.factory.impl;
 
 import org.repozoo.commons.range.Range;
-import org.repozoo.commons.range.factory.RangeFactory;
+import org.repozoo.commons.range.RangeFactory;
 
 import java.util.Comparator;
 import java.util.function.UnaryOperator;

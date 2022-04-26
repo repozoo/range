@@ -1,4 +1,4 @@
-package org.repozoo.commons.range.factory;
+package org.repozoo.commons.range;
 
 import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.ValueIterator;
