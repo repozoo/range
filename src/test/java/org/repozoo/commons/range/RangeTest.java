@@ -1,6 +1,6 @@
 package org.repozoo.commons.range;
 
-import org.repozoo.commons.range.factory.impl.IntRange;
+import org.repozoo.commons.range.factories.IntRange;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
