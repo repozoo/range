@@ -2,7 +2,7 @@ package org.repozoo.commons.range;
 
 import java.util.Comparator;
 
-public interface Value<X> extends Comparable<Value<X>> {
+interface Value<X> extends Comparable<Value<X>> {
 
     X value();
     Value<X> next();
