@@ -138,7 +138,7 @@ public class Range<T> implements RangeSet<T> {
         return Range.between(minStart, maxEnd);
     }
 
-    public static <X> Range<X> between(Value<X> min, Value<X> max) {
+    static <X> Range<X> between(Value<X> min, Value<X> max) {
         return new Range<>(min, max);
     }
 
