@@ -1,7 +1,6 @@
 package org.repozoo.commons.range;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.repozoo.commons.range.value.Value;
 
 import java.util.Arrays;
@@ -10,7 +9,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@ToString
 @EqualsAndHashCode
 public class Range<T> implements RangeSet<T> {
 
@@ -157,5 +155,10 @@ public class Range<T> implements RangeSet<T> {
     @SafeVarargs
     private static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
         return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
+    }
+
+    @Override
+    public String toString() {
+        return "Range{from=" + from() + ", to=" + to() + '}';
     }
 }
