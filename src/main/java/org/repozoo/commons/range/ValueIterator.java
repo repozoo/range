@@ -1,8 +1,6 @@
 package org.repozoo.commons.range;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.function.UnaryOperator;
 

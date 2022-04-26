@@ -42,7 +42,7 @@ public interface RangeSet<T> {
     }
 
     /**
-     * Returns true if this and other {@link Range} do not intersect..
+     * Returns true if this and other {@link Range} do not intersect.
      */
     default boolean isDistinct(Range<T> other) {
         return !intersects(other);
@@ -117,7 +117,7 @@ public interface RangeSet<T> {
 
     static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            return Range.sourround(aRange, other);
+            return Range.surround(aRange, other);
         } else {
             return newRangeSet(aRange, other);
         }

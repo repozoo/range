@@ -125,7 +125,7 @@ public class Range<T> implements RangeSet<T> {
      * example: enclose([1-3], [5-8]) -> [1-8]
      */
     @SafeVarargs
-    public static <T> Range<T> sourround(Range<T>... ranges) {
+    public static <T> Range<T> surround(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
         Value<T> minStart = min(Range::min, ranges);
         Value<T> maxEnd = max(Range::max, ranges);

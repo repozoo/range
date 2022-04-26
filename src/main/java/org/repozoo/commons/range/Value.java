@@ -38,11 +38,6 @@ class Value<X> implements Comparable<Value<X>> {
         return this.compareTo(other) > 0;
     }
 
-    public boolean isAfter(X x) {
-        Value<X> other = with(x);
-        return this.isAfter(other);
-    }
-
     public boolean isAfterOrEqual(Value<X> other) {
         int i = this.compareTo(other);
         return i > 0 || i == 0;
@@ -55,11 +50,6 @@ class Value<X> implements Comparable<Value<X>> {
 
     public boolean isBefore(Value<X> other) {
         return this.compareTo(other) < 0;
-    }
-
-    public boolean isBefore(X x) {
-        Value<X> other = with(x);
-        return this.isBefore(other);
     }
 
     public boolean isBeforeOrEqual(Value<X> other) {
