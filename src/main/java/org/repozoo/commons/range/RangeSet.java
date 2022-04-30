@@ -93,7 +93,7 @@ public interface RangeSet<T> {
     }
 
     static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
-        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::min)).collect(RangeSet.toStack());
+        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::minValue)).collect(RangeSet.toStack());
         return newRangeSet(stackedRanges);
     }
 
