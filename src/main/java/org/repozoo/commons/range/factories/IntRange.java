@@ -8,6 +8,8 @@ import java.util.function.UnaryOperator;
 
 public class IntRange {
 
+    private IntRange() {}
+
     private static final RangeFactory.CreateRange<Integer> createRange = createIntRange();
 
     public static Range<Integer> between(Integer min, Integer max) {

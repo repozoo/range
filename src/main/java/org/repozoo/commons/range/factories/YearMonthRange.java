@@ -8,6 +8,8 @@ import java.util.function.UnaryOperator;
 
 public class YearMonthRange {
 
+    private YearMonthRange() {}
+
     private static final RangeFactory.CreateRange<YearMonth> createRange = createRange();
 
     public static Range<YearMonth> between(YearMonth min, YearMonth max) {
