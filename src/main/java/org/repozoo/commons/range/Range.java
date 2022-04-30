@@ -35,14 +35,14 @@ public class Range<T> implements RangeSet<T> {
     /**
      * Returns the inclusive start value of this range.
      */
-    public T from() {
+    public T min() {
         return minValue().value();
     }
 
     /**
      * Returns the inclusive end value of this range.
      */
-    public T to() {
+    public T max() {
         return maxValue().value();
     }
 
@@ -118,7 +118,7 @@ public class Range<T> implements RangeSet<T> {
 
     @Override
     public String toString() {
-        return "Range{from=" + from() + ", to=" + to() + '}';
+        return "Range{from=" + min() + ", to=" + max() + '}';
     }
 
     private boolean contains(Value<T> value) {

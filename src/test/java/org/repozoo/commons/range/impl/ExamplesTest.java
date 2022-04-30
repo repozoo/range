@@ -30,8 +30,8 @@ class ExamplesTest {
         YearMonth dec = YearMonth.parse("2022-12");
         Range<YearMonth> range = createRange.between(jan, dec);
 
-        assertThat(range.from()).isEqualTo(jan);
-        assertThat(range.to()).isEqualTo(dec);
+        assertThat(range.min()).isEqualTo(jan);
+        assertThat(range.max()).isEqualTo(dec);
     }
 
     @Test
