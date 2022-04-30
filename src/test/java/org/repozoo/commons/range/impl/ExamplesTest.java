@@ -29,6 +29,9 @@ class ExamplesTest {
         YearMonth jan = YearMonth.parse("2022-01");
         YearMonth dec = YearMonth.parse("2022-12");
         Range<YearMonth> range = createRange.between(jan, dec);
+
+        assertThat(range.from()).isEqualTo(jan);
+        assertThat(range.to()).isEqualTo(dec);
     }
 
     @Test

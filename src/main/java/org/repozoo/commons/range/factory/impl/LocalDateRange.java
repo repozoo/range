@@ -8,6 +8,8 @@ import java.util.function.UnaryOperator;
 
 public class LocalDateRange {
 
+    private LocalDateRange() {}
+
     private static final RangeFactory.CreateRange<LocalDate> createRange = createRange();
 
     public static Range<LocalDate> between(LocalDate min, LocalDate max) {
