@@ -136,5 +136,5 @@ and the two `Value`s `from` and `to` _(inclusive)_.<br>
 
 <img src="./documentation/images/range-and-rangeset-uml.svg" alt="range-uml">
 
-Most important operations
+Basic operations
 <img src="./documentation/images/range-API.svg" alt="range-api">
