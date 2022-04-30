@@ -33,14 +33,14 @@ public class Range<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns the inclusive start value of this range.
+     * Returns the inclusive minimum of this range.
      */
     public T min() {
         return minValue().value();
     }
 
     /**
-     * Returns the inclusive end value of this range.
+     * Returns the inclusive maximum of this range.
      */
     public T max() {
         return maxValue().value();
@@ -49,8 +49,8 @@ public class Range<T> implements RangeSet<T> {
     /**
      * Returns true if t lies inside this range.
      */
-    public boolean contains(T value) {
-        return minValue().isBeforeOrEqual(value) && maxValue().isAfterOrEqual(value);
+    public boolean contains(T t) {
+        return minValue().isBeforeOrEqual(t) && maxValue().isAfterOrEqual(t);
     }
 
     /**
@@ -75,14 +75,14 @@ public class Range<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns true if this range ends before the other starts.
+     * Returns true if this.max < other.min.
      */
     public boolean isBefore(Range<T> other) {
         return maxValue().isBefore(other.minValue());
     }
 
     /**
-     * Returns true if this range starts after the other ends.
+     * Returns true if this.min > other.max.
      */
     public boolean isAfter(Range<T> other) {
         return minValue().isAfter(other.maxValue());
@@ -93,20 +93,23 @@ public class Range<T> implements RangeSet<T> {
         return false;
     }
 
+    /**
+     * Returns a single element stream containing this range.
+     */
     @Override
     public Stream<Range<T>> stream() {
         return Stream.of(this);
     }
 
     /**
-     * Returns true if this.min() is before other.min().
+     * Returns true if this.min < other.min.
      */
     public boolean startsBefore(Range<T> other) {
         return minValue().isBefore(other.minValue());
     }
 
     /**
-     * Returns true if this.max() is after other.max().
+     * Returns true if this.max > other.max.
      */
     public boolean endsAfter(Range<T> other) {
         return maxValue().isAfter(other.maxValue());
@@ -127,7 +130,7 @@ public class Range<T> implements RangeSet<T> {
 
     /**
      * Returns a {@link Range} that surrounds all ranges<br>
-     * example: enclose([1-3], [5-8]) -> [1-8]
+     * example: enclose([1-3], [5-8]) returns [1-8]
      */
     @SafeVarargs
     public static <T> Range<T> surround(Range<T>... ranges) {

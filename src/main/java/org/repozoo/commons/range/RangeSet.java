@@ -42,7 +42,7 @@ public interface RangeSet<T> {
     }
 
     /**
-     * Returns true if this and other {@link Range} do not intersect.
+     * Returns true if this {@link Range} and other do not intersect.
      */
     default boolean isDistinct(Range<T> other) {
         return !intersects(other);
@@ -70,31 +70,34 @@ public interface RangeSet<T> {
     }
 
     /**
-     * True if this set has no range
+     * Returns true if this set has no range
      */
     default boolean isEmpty() {
         return getRanges().isEmpty();
     }
 
+    /**
+     * Returns a list of all {@link Range}s in this set, ordered by Range::min ascending.
+     */
     default List<Range<T>> getRanges() {
         return stream().collect(Collectors.toList());
     }
 
 
-
+    /**
+     * Creates a new {@link RangeSet} containing no ranges.
+     */
     static <T> RangeSet<T> empty() {
         return Stream::empty;
     }
 
+    /**
+     * Creates a new {@link RangeSet} containing all specified {@link Range}s after being normalized.
+     */
     @SafeVarargs
     static <T> RangeSet<T> of(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
         return normalize(Arrays.stream(ranges));
-    }
-
-    static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
-        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::minValue)).collect(RangeSet.toStack());
-        return newRangeSet(stackedRanges);
     }
 
     static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
@@ -112,6 +115,11 @@ public interface RangeSet<T> {
 
     static String toString(RangeSet<?> rangeSet) {
         return rangeSet.stream().map(Range::toString).collect(Collectors.joining("\n"));
+    }
+
+    private static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
+        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::minValue)).collect(RangeSet.toStack());
+        return newRangeSet(stackedRanges);
     }
 
     private static <T> RangeSet<T> newRangeSet(Collection<Range<T>> ranges) {
