@@ -1,7 +1,7 @@
-package org.repozoo.commons.range.factory.impl;
+package org.repozoo.commons.range.factories;
 
 import org.repozoo.commons.range.Range;
-import org.repozoo.commons.range.factory.RangeFactory;
+import org.repozoo.commons.range.RangeFactory;
 
 import java.time.YearMonth;
 import java.util.function.UnaryOperator;

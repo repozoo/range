@@ -1,8 +1,4 @@
-package org.repozoo.commons.range.factory;
-
-import org.repozoo.commons.range.Range;
-import org.repozoo.commons.range.ValueIterator;
-import org.repozoo.commons.range.value.Value;
+package org.repozoo.commons.range;
 
 import java.util.Comparator;
 import java.util.function.UnaryOperator;
@@ -38,8 +34,8 @@ public class RangeFactory {
 
         public CreateRange<Y> build() {
             return (from, to) -> {
-                Value<Y> min = Value.of(from, iterator, comparator);
-                Value<Y> max = Value.of(to, iterator, comparator);
+                Value<Y> min = new Value<>(from, iterator, comparator);
+                Value<Y> max = new Value<>(to, iterator, comparator);
                 return Range.between(min, max);
             };
         }

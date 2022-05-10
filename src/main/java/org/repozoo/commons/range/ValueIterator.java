@@ -1,16 +1,11 @@
 package org.repozoo.commons.range;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.function.UnaryOperator;
 
-
-@ToString
 @AllArgsConstructor
-@EqualsAndHashCode
-public class ValueIterator<Y> {
+class ValueIterator<Y> {
 
     private final UnaryOperator<Y> next;
     private final UnaryOperator<Y> previous;

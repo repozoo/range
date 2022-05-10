@@ -1,8 +1,8 @@
 package org.repozoo.commons.range.impl;
 
-import org.repozoo.commons.range.factory.RangeFactory;
-import org.repozoo.commons.range.factory.impl.LocalDateRange;
 import org.repozoo.commons.range.Range;
+import org.repozoo.commons.range.RangeFactory;
+import org.repozoo.commons.range.factories.LocalDateRange;
 import org.repozoo.commons.range.RangeSet;
 import org.junit.jupiter.api.Test;
 

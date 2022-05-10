@@ -1,6 +1,5 @@
 package org.repozoo.commons.range;
 
-import org.repozoo.commons.range.factory.RangeFactory;
 import org.junit.jupiter.api.Test;
 
 import java.time.YearMonth;

@@ -1,6 +1,6 @@
 package org.repozoo.commons.range.impl;
 
-import org.repozoo.commons.range.factory.impl.LocalDateRange;
+import org.repozoo.commons.range.factories.LocalDateRange;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

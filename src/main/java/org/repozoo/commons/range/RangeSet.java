@@ -42,7 +42,7 @@ public interface RangeSet<T> {
     }
 
     /**
-     * Returns true if this and other {@link Range} do not intersect..
+     * Returns true if this and other {@link Range} do not intersect.
      */
     default boolean isDistinct(Range<T> other) {
         return !intersects(other);
@@ -60,7 +60,7 @@ public interface RangeSet<T> {
             others.stream().forEach(other -> {
                 if (!stack.isEmpty()) {
                     Range<T> topRange = stack.pop();
-                    RangeSet<T> result = RangeSet.remove(topRange, other);
+                    RangeSet<T> result = Range.remove(topRange, other);
                     result.stream().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
             });
@@ -80,25 +80,7 @@ public interface RangeSet<T> {
         return stream().collect(Collectors.toList());
     }
 
-    private static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
-        if (aRange.intersects(toRemove)) {
-            if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
-                return RangeSet.empty();
-            } else if (aRange.contains(toRemove) && (toRemove.min().isAfter(aRange.min()) && toRemove.max().isBefore(aRange.max()))) {
-                Range<T> r1 = Range.between(aRange.min(), toRemove.min().previous());
-                Range<T> r2 = Range.between(toRemove.max().next(), aRange.max());
-                return RangeSet.of(r1, r2);
-            } else {
-                if (toRemove.min().isAfter(aRange.min())) {
-                    return Range.between(aRange.min(), toRemove.min().previous());
-                } else {
-                    return Range.between(toRemove.max().next(), aRange.max());
-                }
-            }
-        } else {
-            return aRange;
-        }
-    }
+
 
     static <T> RangeSet<T> empty() {
         return Stream::empty;
@@ -117,7 +99,7 @@ public interface RangeSet<T> {
 
     static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            return Range.sourround(aRange, other);
+            return Range.surround(aRange, other);
         } else {
             return newRangeSet(aRange, other);
         }
