@@ -119,6 +119,9 @@ public class Range<T> implements RangeSet<T> {
         return this.contains(other.minValue()) || this.contains(other.maxValue()) || other.contains(this);
     }
 
+    /**
+     * Returns a String representation of this range in the form <pre>"Range[from=1, to=3]"</pre>
+     */
     @Override
     public String toString() {
         return "Range{from=" + min() + ", to=" + max() + '}';

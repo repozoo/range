@@ -118,11 +118,17 @@ public interface RangeSet<T> {
         return normalize(Arrays.stream(ranges));
     }
 
+    /**
+     * TODO
+     */
     static <T> RangeSet<T> sum(RangeSet<T> set1, RangeSet<T> set2) {
         Stream<Range<T>> rangeStream = Stream.concat(set1.stream(), set2.stream());
         return RangeSet.normalize(rangeStream);
     }
 
+    /**
+     * TODO
+     */
     static <T> String toString(RangeSet<T> rangeSet) {
         return rangeSet.stream().map(Range::toString).collect(Collectors.joining("\n"));
     }
