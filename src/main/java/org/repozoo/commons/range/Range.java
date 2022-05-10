@@ -24,40 +24,40 @@ public class Range<T> implements RangeSet<T> {
         this.max = max;
     }
 
-    Value<T> min() {
+    Value<T> minValue() {
         return min;
     }
 
-    Value<T> max() {
+    Value<T> maxValue() {
         return max;
     }
 
     /**
-     * Returns the inclusive start value of this range.
+     * Returns the inclusive minimum of this range.
      */
-    public T from() {
-        return min().value();
+    public T min() {
+        return minValue().value();
     }
 
     /**
-     * Returns the inclusive end value of this range.
+     * Returns the inclusive maximum of this range.
      */
-    public T to() {
-        return max().value();
+    public T max() {
+        return maxValue().value();
     }
 
     /**
      * Returns true if t lies inside this range.
      */
-    public boolean contains(T value) {
-        return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
+    public boolean contains(T t) {
+        return minValue().isBeforeOrEqual(t) && maxValue().isAfterOrEqual(t);
     }
 
     /**
      * Returns true if the other {@link Range} lies inside or is equal to this range.
      */
     public boolean contains(Range<T> other) {
-        return contains(other.min()) && contains(other.max());
+        return contains(other.minValue()) && contains(other.maxValue());
     }
 
     /**
@@ -75,17 +75,17 @@ public class Range<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns true if this range ends before the other starts.
+     * Returns true if this.max < other.min.
      */
     public boolean isBefore(Range<T> other) {
-        return max().isBefore(other.min());
+        return maxValue().isBefore(other.minValue());
     }
 
     /**
-     * Returns true if this range starts after the other ends.
+     * Returns true if this.min > other.max.
      */
     public boolean isAfter(Range<T> other) {
-        return min().isAfter(other.max());
+        return minValue().isAfter(other.maxValue());
     }
 
     @Override
@@ -93,47 +93,53 @@ public class Range<T> implements RangeSet<T> {
         return false;
     }
 
+    /**
+     * Returns a single element stream containing this range.
+     */
     @Override
     public Stream<Range<T>> stream() {
         return Stream.of(this);
     }
 
     /**
-     * Returns true if this.min() is before other.min().
+     * Returns true if this.min < other.min.
      */
     public boolean startsBefore(Range<T> other) {
-        return min().isBefore(other.min());
+        return minValue().isBefore(other.minValue());
     }
 
     /**
-     * Returns true if this.max() is after other.max().
+     * Returns true if this.max > other.max.
      */
     public boolean endsAfter(Range<T> other) {
-        return max().isAfter(other.max());
+        return maxValue().isAfter(other.maxValue());
     }
 
     boolean intersects(Range<T> other) {
-        return this.contains(other.min()) || this.contains(other.max()) || other.contains(this);
-    }
-
-    @Override
-    public String toString() {
-        return "Range{from=" + from() + ", to=" + to() + '}';
-    }
-
-    private boolean contains(Value<T> value) {
-        return min().isBeforeOrEqual(value) && max().isAfterOrEqual(value);
+        return this.contains(other.minValue()) || this.contains(other.maxValue()) || other.contains(this);
     }
 
     /**
-     * Returns a {@link Range} that surrounds all ranges<br>
-     * example: enclose([1-3], [5-8]) -> [1-8]
+     * Returns a String representation of this range in the form <pre>"Range[from=1, to=3]"</pre>
+     */
+    @Override
+    public String toString() {
+        return "Range{from=" + min() + ", to=" + max() + '}';
+    }
+
+    private boolean contains(Value<T> value) {
+        return minValue().isBeforeOrEqual(value) && maxValue().isAfterOrEqual(value);
+    }
+
+    /**
+     * Returns a {@link Range} that surrounds all supplied ranges<br>
+     * example: <pre>enclose([1-3], [5-8]) returns [1-8]</pre>
      */
     @SafeVarargs
     public static <T> Range<T> surround(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
-        Value<T> minStart = min(Range::min, ranges);
-        Value<T> maxEnd = max(Range::max, ranges);
+        Value<T> minStart = min(Range::minValue, ranges);
+        Value<T> maxEnd = max(Range::maxValue, ranges);
         return Range.between(minStart, maxEnd);
     }
 
@@ -145,15 +151,15 @@ public class Range<T> implements RangeSet<T> {
         if (aRange.intersects(toRemove)) {
             if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
                 return RangeSet.empty();
-            } else if (aRange.contains(toRemove) && (toRemove.min().isAfter(aRange.min()) && toRemove.max().isBefore(aRange.max()))) {
-                Range<T> r1 = Range.between(aRange.min(), toRemove.min().previous());
-                Range<T> r2 = Range.between(toRemove.max().next(), aRange.max());
+            } else if (aRange.contains(toRemove) && (toRemove.minValue().isAfter(aRange.minValue()) && toRemove.maxValue().isBefore(aRange.maxValue()))) {
+                Range<T> r1 = Range.between(aRange.minValue(), toRemove.minValue().previous());
+                Range<T> r2 = Range.between(toRemove.maxValue().next(), aRange.maxValue());
                 return RangeSet.of(r1, r2);
             } else {
-                if (toRemove.min().isAfter(aRange.min())) {
-                    return Range.between(aRange.min(), toRemove.min().previous());
+                if (toRemove.minValue().isAfter(aRange.minValue())) {
+                    return Range.between(aRange.minValue(), toRemove.minValue().previous());
                 } else {
-                    return Range.between(toRemove.max().next(), aRange.max());
+                    return Range.between(toRemove.maxValue().next(), aRange.maxValue());
                 }
             }
         } else {
@@ -163,8 +169,8 @@ public class Range<T> implements RangeSet<T> {
 
     private static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            Value<T> maxStart = max(Range::min, aRange, other);
-            Value<T> minEnd = min(Range::max, aRange, other);
+            Value<T> maxStart = max(Range::minValue, aRange, other);
+            Value<T> minEnd = min(Range::maxValue, aRange, other);
             return Range.between(maxStart, minEnd);
         } else {
             return RangeSet.empty();
