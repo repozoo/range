@@ -116,7 +116,7 @@ Range<YearMonth> range = createRange.between(jan, dec);
 ### Maven
 ```
 <dependency>
-  <groupId>org.repozoo.commons</groupId>
+  <groupId>io.github.repozoo</groupId>
   <artifactId>range</artifactId>
   <version>1.0-SNAPSHOT</version>
 </dependency>
