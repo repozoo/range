@@ -129,8 +129,8 @@ public class Range<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns a {@link Range} that surrounds all ranges<br>
-     * example: enclose([1-3], [5-8]) returns [1-8]
+     * Returns a {@link Range} that surrounds all supplied ranges<br>
+     * example: <pre>enclose([1-3], [5-8]) returns [1-8]</pre>
      */
     @SafeVarargs
     public static <T> Range<T> surround(Range<T>... ranges) {
