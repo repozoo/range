@@ -1,3 +1,4 @@
+[![javadoc](https://javadoc.io/badge2/io.github.repozoo/range/javadoc.svg)](https://javadoc.io/doc/io.github.repozoo/range)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 ![JDK](https://img.shields.io/badge/jdk-11-yellowgreen.svg)
 [![SonarCloud analysis](https://github.com/repozoo/range/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/repozoo/range/actions/workflows/sonarcloud.yml)
