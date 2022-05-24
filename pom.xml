@@ -8,6 +8,34 @@
   <artifactId>range</artifactId>
   <version>1.0.0</version>
 
+  <name>range</name>
+  <description>A java library to work with range(s) or interval(s).</description>
+  <url>https://github.com/repozoo/range</url>
+
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>https://raw.githubusercontent.com/repozoo/range/main/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>ynk</id>
+      <name>Yves Nzinga-Kempter</name>
+      <email>ynk@tutamail.com</email>
+      <organization>repozoo</organization>
+    </developer>
+  </developers>
+
+  <scm>
+    <!-- You would think this is a Public Read-Only connection, but it allows for authenticated PUSH too -->
+    <developerConnection>scm:git:ssh://git@github.com/repozoo/range.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/repozoo/range.git</connection>
+    <url>http://github.com/repozoo/range/tree/main</url>
+  </scm>
+
   <properties>
 
     <!-- compiler -->
@@ -92,7 +120,7 @@
           <execution>
             <id>attach-sources</id>
             <goals>
-              <goal>jar</goal>
+              <goal>jar-no-fork</goal>
             </goals>
           </execution>
         </executions>
@@ -119,13 +147,28 @@
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
+        <version>1.6.12</version>
         <extensions>true</extensions>
         <configuration>
           <serverId>ossrh</serverId>
           <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
