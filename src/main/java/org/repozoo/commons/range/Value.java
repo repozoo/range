@@ -59,6 +59,6 @@ class Value<X> implements Comparable<Value<X>> {
 
     public boolean isBeforeOrEqual(X x) {
         Value<X> other = this.with(x);
-        return this.isAfterOrEqual(other);
+        return this.isBeforeOrEqual(other);
     }
 }

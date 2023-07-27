@@ -9,6 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RangeTest {
 
     @Test
+    void contains_test() {
+        assertThat(IntRange.between(1, 1).contains(3)).isFalse();
+        assertThat(IntRange.between(5, 5).contains(3)).isFalse();
+    }
+
+    @Test
     void isBefore_isOnlyTrueIfEntireRangeIsBeforeOther() {
         assertThat(IntRange.between(1, 2).isBefore(IntRange.between(3, 4))).isTrue();
         assertThat(IntRange.between(2, 3).isBefore(IntRange.between(3, 4))).isFalse();
