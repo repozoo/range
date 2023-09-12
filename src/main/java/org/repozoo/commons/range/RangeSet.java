@@ -19,14 +19,7 @@ public interface RangeSet<T> {
     }
 
     default void forEachValue(Consumer<T> valueConsumer) {
-        streamRanges().forEach(r -> {
-            Value<T> max = r.maxValue();
-            Value<T> current = r.minValue();
-            while (current.compareTo(max) <= 0) {
-                valueConsumer.accept(current.value());
-                current = current.next();
-            }
-        });
+        streamValues().forEach(valueConsumer::accept);
     }
 
 
