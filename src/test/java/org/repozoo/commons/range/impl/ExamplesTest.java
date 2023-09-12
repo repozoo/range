@@ -53,7 +53,7 @@ class ExamplesTest {
         // Act
         RangeSet<LocalDate> atLeastOneIsAbsent = vacationSahrah.add(vacationJimmy).add(vacationReggy);
         // Assert
-        assertThat(atLeastOneIsAbsent.stream())
+        assertThat(atLeastOneIsAbsent.streamRanges())
                 .containsExactly(
                         LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(9)),
                         LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(31))
@@ -77,7 +77,7 @@ class ExamplesTest {
         // Act
         RangeSet<LocalDate> everybodyIsPresent = december.remove(vacationSahrah).remove(vacationJimmy);
         // Assert
-        assertThat(everybodyIsPresent.stream())
+        assertThat(everybodyIsPresent.streamRanges())
                 .containsExactly(
                         LocalDateRange.between(dec2021.atDay(10), dec2021.atDay(13))
                 );
@@ -99,7 +99,7 @@ class ExamplesTest {
         // Act
         RangeSet<LocalDate> everybodyIsAbsent = vacationSahrah.intersection(vacationJimmy);
         // Assert
-        assertThat(everybodyIsAbsent.stream())
+        assertThat(everybodyIsAbsent.streamRanges())
                 .containsExactly(
                         LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
                         LocalDateRange.between(dec2021.atDay(23), dec2021.atDay(26)),

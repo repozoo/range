@@ -1,15 +1,31 @@
 package org.repozoo.commons.range.impl;
 
-import org.repozoo.commons.range.factories.LocalDateRange;
 import org.junit.jupiter.api.Test;
+import org.repozoo.commons.range.Range;
+import org.repozoo.commons.range.RangeSet;
+import org.repozoo.commons.range.factories.LocalDateRange;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class LocalDateRangeTest {
+
+    @Test
+    void streamValues_givesExpectedElements() {
+        Range<LocalDate> vacationBerlin = LocalDateRange.between(LocalDate.parse("2024-07-18"), LocalDate.parse("2024-08-30"));
+        Range<LocalDate> vacationBayern = LocalDateRange.between(LocalDate.parse("2024-07-29"), LocalDate.parse("2024-09-09"));
+        RangeSet<LocalDate> intersection = vacationBerlin.intersection(vacationBayern);
+        
+        List<String> list = intersection.streamValues().map(LocalDate::toString).toList();
+        
+        assertThat(list).hasSize(33);
+        assertThat(list).first().isEqualTo("2024-07-29");
+        assertThat(list).last().isEqualTo("2024-08-30");
+    }
 
     @Test
     void create_neitherStartNorEndAllowedToBeNull() {

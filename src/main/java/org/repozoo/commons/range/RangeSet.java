@@ -1,6 +1,7 @@
 package org.repozoo.commons.range;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -12,7 +13,21 @@ public interface RangeSet<T> {
      * Returns a {@link Range} stream containing all ranges of this set<br>
      * or an empty stream if this {@link RangeSet} is empty.
      */
-    Stream<Range<T>> stream();
+    Stream<Range<T>> streamRanges();
+    default Stream<T> streamValues() {
+        return streamRanges().flatMap(Range::streamValues);
+    }
+
+    default void forEachValue(Consumer<T> valueConsumer) {
+        streamRanges().forEach(r -> {
+            Value<T> max = r.maxValue();
+            Value<T> current = r.minValue();
+            while (current.compareTo(max) <= 0) {
+                valueConsumer.accept(current.value());
+                current = current.next();
+            }
+        });
+    }
 
 
     /**
@@ -20,23 +35,23 @@ public interface RangeSet<T> {
      * At least one {@link Range} of this set contains 'other'.
      */
     default boolean contains(RangeSet<T> others) {
-        return others.stream().allMatch(other -> stream().anyMatch(r -> r.contains(other)));
+        return others.streamRanges().allMatch(other -> streamRanges().anyMatch(r -> r.contains(other)));
     }
 
     /**
      * Returns true if any {@link Range} of this set intersects with at least one {@link Range} of others.
      */
     default boolean intersects(RangeSet<T> others) {
-        return stream().anyMatch(aRange -> others.stream().anyMatch(aRange::intersects));
+        return streamRanges().anyMatch(aRange -> others.streamRanges().anyMatch(aRange::intersects));
     }
 
     /**
      * Returns a new RangeSet containing all {@link Range} parts that exist in this and others.
      */
     default RangeSet<T> intersection(RangeSet<T> others) {
-        List<Range<T>> intersections = stream()
+        List<Range<T>> intersections = streamRanges()
                 .map(others::intersection)
-                .flatMap(RangeSet::stream)
+                .flatMap(RangeSet::streamRanges)
                 .collect(Collectors.toList());
         return newRangeSet(intersections);
     }
@@ -75,11 +90,11 @@ public interface RangeSet<T> {
         getRanges().forEach(range -> {
             Stack<Range<T>> stack = new Stack<>();
             stack.push(range);
-            others.stream().forEach(other -> {
+            others.streamRanges().forEach(other -> {
                 if (!stack.isEmpty()) {
                     Range<T> topRange = stack.pop();
                     RangeSet<T> result = Range.remove(topRange, other);
-                    result.stream().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
+                    result.streamRanges().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
             });
             newRanges.addAll(stack);
@@ -98,7 +113,7 @@ public interface RangeSet<T> {
      * Returns a list of all {@link Range}s in this set, ordered by Range::min ascending.
      */
     default List<Range<T>> getRanges() {
-        return stream().collect(Collectors.toList());
+        return streamRanges().collect(Collectors.toList());
     }
 
 
@@ -122,7 +137,7 @@ public interface RangeSet<T> {
      * TODO
      */
     static <T> RangeSet<T> sum(RangeSet<T> set1, RangeSet<T> set2) {
-        Stream<Range<T>> rangeStream = Stream.concat(set1.stream(), set2.stream());
+        Stream<Range<T>> rangeStream = Stream.concat(set1.streamRanges(), set2.streamRanges());
         return RangeSet.normalize(rangeStream);
     }
 
@@ -130,7 +145,7 @@ public interface RangeSet<T> {
      * TODO
      */
     static <T> String toString(RangeSet<T> rangeSet) {
-        return rangeSet.stream().map(Range::toString).collect(Collectors.joining("\n"));
+        return rangeSet.streamRanges().map(Range::toString).collect(Collectors.joining("\n"));
     }
 
     private static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {

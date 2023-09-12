@@ -65,12 +65,12 @@ public class Range<T> implements RangeSet<T> {
      */
     @Override
     public boolean intersects(RangeSet<T> others) {
-        return others.stream().anyMatch(this::intersects);
+        return others.streamRanges().anyMatch(this::intersects);
     }
 
     @Override
     public RangeSet<T> intersection(RangeSet<T> others) {
-        return others.stream().map(other -> Range.intersection(this, other))
+        return others.streamRanges().map(other -> Range.intersection(this, other))
                 .reduce(RangeSet.empty(), RangeSet::sum);
     }
 
@@ -97,8 +97,15 @@ public class Range<T> implements RangeSet<T> {
      * Returns a single element stream containing this range.
      */
     @Override
-    public Stream<Range<T>> stream() {
+    public Stream<Range<T>> streamRanges() {
         return Stream.of(this);
+    }
+
+    @Override
+    public Stream<T> streamValues() {
+        return Stream
+            .iterate(minValue(), value -> value.isBeforeOrEqual(maxValue()), Value::next)
+            .map(Value::value);
     }
 
     /**

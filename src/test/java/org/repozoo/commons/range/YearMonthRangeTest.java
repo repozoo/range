@@ -101,13 +101,13 @@ class YearMonthRangeTest {
         YearMonth four = YearMonth.parse("2021-05");
         YearMonth six = YearMonth.parse("2021-06");
 
-        assertThat(YearMonthRange.between(three, six).intersection(YearMonthRange.between(three, six)).stream()).containsExactly(YearMonthRange.between(three, six));
+        assertThat(YearMonthRange.between(three, six).intersection(YearMonthRange.between(three, six)).streamRanges()).containsExactly(YearMonthRange.between(three, six));
 
-        assertThat(YearMonthRange.between(one, three).intersection(YearMonthRange.between(two, four)).stream()).containsExactly(YearMonthRange.between(two, three));
-        assertThat(YearMonthRange.between(two, four).intersection(YearMonthRange.between(one, three)).stream()).containsExactly(YearMonthRange.between(two, three));
+        assertThat(YearMonthRange.between(one, three).intersection(YearMonthRange.between(two, four)).streamRanges()).containsExactly(YearMonthRange.between(two, three));
+        assertThat(YearMonthRange.between(two, four).intersection(YearMonthRange.between(one, three)).streamRanges()).containsExactly(YearMonthRange.between(two, three));
 
-        assertThat(YearMonthRange.between(one, six).intersection(YearMonthRange.between(two, four)).stream()).containsExactly(YearMonthRange.between(two, four));
-        assertThat(YearMonthRange.between(two, four).intersection(YearMonthRange.between(one, six)).stream()).containsExactly(YearMonthRange.between(two, four));
+        assertThat(YearMonthRange.between(one, six).intersection(YearMonthRange.between(two, four)).streamRanges()).containsExactly(YearMonthRange.between(two, four));
+        assertThat(YearMonthRange.between(two, four).intersection(YearMonthRange.between(one, six)).streamRanges()).containsExactly(YearMonthRange.between(two, four));
     }
 
     @Test
