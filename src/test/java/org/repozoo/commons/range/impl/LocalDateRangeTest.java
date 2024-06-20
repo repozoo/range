@@ -1,7 +1,6 @@
 package org.repozoo.commons.range.impl;
 
 import org.junit.jupiter.api.Test;
-import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.RangeI;
 import org.repozoo.commons.range.RangeSet;
 import org.repozoo.commons.range.factories.LocalDateRange;

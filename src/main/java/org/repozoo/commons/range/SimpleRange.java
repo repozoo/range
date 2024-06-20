@@ -9,12 +9,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @EqualsAndHashCode
-public class Range<T> implements RangeI<T> {
+public class SimpleRange<T> implements RangeI<T> {
 
     private final Value<T> min;
     private final Value<T> max;
 
-    private Range(Value<T> min, Value<T> max) {
+    private SimpleRange(Value<T> min, Value<T> max) {
         Objects.requireNonNull(min);
         Objects.requireNonNull(max);
         if (min.isAfter(max)) {
@@ -109,7 +109,7 @@ public class Range<T> implements RangeI<T> {
 
 
     /**
-     * Returns a {@link Range} with the global min max values of all supplied ranges<br>
+     * Returns a {@link SimpleRange} with the global min max values of all supplied ranges<br>
      * example:
      * <ul>
      *     <li><pre>enclose([1-3], [5-8]) -> [1-8]</pre></li>
@@ -121,11 +121,11 @@ public class Range<T> implements RangeI<T> {
         Objects.requireNonNull(ranges);
         Value<T> minStart = min(RangeI::minValue, ranges);
         Value<T> maxEnd = max(RangeI::maxValue, ranges);
-        return Range.between(minStart, maxEnd);
+        return SimpleRange.between(minStart, maxEnd);
     }
 
     static <X> RangeI<X> between(Value<X> min, Value<X> max) {
-        return new Range<>(min, max);
+        return new SimpleRange<>(min, max);
     }
 
     static <T> RangeSet<T> remove(RangeI<T> aRange, RangeI<T> toRemove) {
@@ -133,14 +133,14 @@ public class Range<T> implements RangeI<T> {
             if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
                 return RangeSet.empty();
             } else if (aRange.contains(toRemove) && (toRemove.minValue().isAfter(aRange.minValue()) && toRemove.maxValue().isBefore(aRange.maxValue()))) {
-                RangeI<T> r1 = Range.between(aRange.minValue(), toRemove.minValue().previous());
-                RangeI<T> r2 = Range.between(toRemove.maxValue().next(), aRange.maxValue());
+                RangeI<T> r1 = SimpleRange.between(aRange.minValue(), toRemove.minValue().previous());
+                RangeI<T> r2 = SimpleRange.between(toRemove.maxValue().next(), aRange.maxValue());
                 return RangeSet.of(r1, r2);
             } else {
                 if (toRemove.minValue().isAfter(aRange.minValue())) {
-                    return Range.between(aRange.minValue(), toRemove.minValue().previous());
+                    return SimpleRange.between(aRange.minValue(), toRemove.minValue().previous());
                 } else {
-                    return Range.between(toRemove.maxValue().next(), aRange.maxValue());
+                    return SimpleRange.between(toRemove.maxValue().next(), aRange.maxValue());
                 }
             }
         } else {
@@ -152,7 +152,7 @@ public class Range<T> implements RangeI<T> {
         if (aRange.intersects(other)) {
             Value<T> maxStart = max(RangeI::minValue, aRange, other);
             Value<T> minEnd = min(RangeI::maxValue, aRange, other);
-            return Range.between(maxStart, minEnd);
+            return SimpleRange.between(maxStart, minEnd);
         } else {
             return RangeSet.empty();
         }

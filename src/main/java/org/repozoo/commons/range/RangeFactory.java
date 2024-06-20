@@ -36,7 +36,7 @@ public class RangeFactory {
             return (from, to) -> {
                 Value<Y> min = new Value<>(from, iterator, comparator);
                 Value<Y> max = new Value<>(to, iterator, comparator);
-                return Range.between(min, max);
+                return SimpleRange.between(min, max);
             };
         }
     }

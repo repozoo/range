@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public interface RangeSet<T> {
 
     /**
-     * Returns a {@link Range} stream containing all ranges of this set<br>
+     * Returns a {@link SimpleRange} stream containing all ranges of this set<br>
      * or an empty stream if this {@link RangeSet} is empty.
      */
     Stream<RangeI<T>> streamRanges();
@@ -25,22 +25,22 @@ public interface RangeSet<T> {
 
 
     /**
-     * Returns true if the following is true for each {@link Range} of others:<br>
-     * At least one {@link Range} of this set contains 'other'.
+     * Returns true if the following is true for each {@link SimpleRange} of others:<br>
+     * At least one {@link SimpleRange} of this set contains 'other'.
      */
     default boolean contains(RangeSet<T> others) {
         return others.streamRanges().allMatch(other -> streamRanges().anyMatch(r -> r.contains(other)));
     }
 
     /**
-     * Returns true if any {@link Range} of this set intersects with at least one {@link Range} of others.
+     * Returns true if any {@link SimpleRange} of this set intersects with at least one {@link SimpleRange} of others.
      */
     default boolean intersects(RangeSet<T> others) {
         return streamRanges().anyMatch(aRange -> others.streamRanges().anyMatch(aRange::intersects));
     }
 
     /**
-     * Returns a new RangeSet containing all {@link Range} parts that exist in this and others.
+     * Returns a new RangeSet containing all {@link SimpleRange} parts that exist in this and others.
      */
     default RangeSet<T> intersection(RangeSet<T> others) {
         List<RangeI<T>> intersections = streamRanges()
@@ -51,7 +51,7 @@ public interface RangeSet<T> {
     }
 
     /**
-     * Returns true if this {@link Range} and other do not intersect.
+     * Returns true if this {@link SimpleRange} and other do not intersect.
      */
     default boolean isDistinct(RangeI<T> other) {
         return !intersects(other);
@@ -87,7 +87,7 @@ public interface RangeSet<T> {
             others.streamRanges().forEach(other -> {
                 if (!stack.isEmpty()) {
                     RangeI<T> topRange = stack.pop();
-                    RangeSet<T> result = Range.remove(topRange, other);
+                    RangeSet<T> result = SimpleRange.remove(topRange, other);
                     result.streamRanges().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
             });
@@ -104,7 +104,7 @@ public interface RangeSet<T> {
     }
 
     /**
-     * Returns a list of all {@link Range}s in this set, ordered by Range::min ascending.
+     * Returns a list of all {@link SimpleRange}s in this set, ordered by Range::min ascending.
      */
     default List<RangeI<T>> getRanges() {
         return streamRanges().collect(Collectors.toList());
@@ -119,7 +119,7 @@ public interface RangeSet<T> {
     }
 
     /**
-     * Creates a new {@link RangeSet} containing all specified {@link Range}s after being normalized.
+     * Creates a new {@link RangeSet} containing all specified {@link SimpleRange}s after being normalized.
      */
     @SafeVarargs
     static <T> RangeSet<T> of(RangeI<T>... ranges) {
@@ -179,7 +179,7 @@ public interface RangeSet<T> {
             RangeI<T> topRange = stack.pop();
             RangeSet<T> sum;
             if (topRange.intersects(range) || topRange.maxValue().next().isEqualTo(range.minValue())) {
-                sum = Range.newRangeFromGlobalMinMax(topRange, range);
+                sum = SimpleRange.newRangeFromGlobalMinMax(topRange, range);
             } else {
                 sum = newRangeSet(topRange, range);
             }

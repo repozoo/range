@@ -1,6 +1,5 @@
 package org.repozoo.commons.range.factories;
 
-import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.RangeFactory;
 import org.repozoo.commons.range.RangeI;
 
