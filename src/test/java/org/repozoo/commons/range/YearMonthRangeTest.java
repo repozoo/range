@@ -89,7 +89,7 @@ class YearMonthRangeTest {
         assertThat(YearMonthRange.between(one, two).add(YearMonthRange.between(two, four)).getRanges())
                 .containsExactly(YearMonthRange.between(one, four));
         assertThat(YearMonthRange.between(one, two).add(YearMonthRange.between(three, four)).getRanges())
-                .containsExactly(YearMonthRange.between(one, two), YearMonthRange.between(three, four));
+                .containsExactly(YearMonthRange.between(one, four));
 
     }
 

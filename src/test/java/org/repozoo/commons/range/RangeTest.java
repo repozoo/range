@@ -122,7 +122,7 @@ class RangeTest {
     @Test
     void add_singeRange() {
         assertThat(IntRange.between(1, 1).add(IntRange.between(1, 1)).getRanges()).containsExactly(IntRange.between(1, 1));
-        assertThat(IntRange.between(1, 1).add(IntRange.between(2, 2)).getRanges()).containsExactly(IntRange.between(1, 1), IntRange.between(2, 2));
+        assertThat(IntRange.between(1, 1).add(IntRange.between(2, 2)).getRanges()).containsExactly(IntRange.between(1, 2));
         assertThat(IntRange.between(1, 2).add(IntRange.between(2, 3)).getRanges()).containsExactly(IntRange.between(1, 3));
         assertThat(IntRange.between(1, 3).add(IntRange.between(2, 4)).getRanges()).containsExactly(IntRange.between(1, 4));
     }
@@ -142,7 +142,7 @@ class RangeTest {
                 IntRange.between(90, 100)
         );
 
-        assertThat(IntRange.between(1, 1).add(IntRange.between(2, 2)).getRanges()).containsExactly(IntRange.between(1, 1), IntRange.between(2, 2));
+        assertThat(IntRange.between(1, 1).add(IntRange.between(2, 2)).getRanges()).containsExactly(IntRange.between(1, 2));
         assertThat(IntRange.between(1, 2).add(IntRange.between(2, 3)).getRanges()).containsExactly(IntRange.between(1, 3));
         assertThat(IntRange.between(1, 3).add(IntRange.between(2, 4)).getRanges()).containsExactly(IntRange.between(1, 4));
     }

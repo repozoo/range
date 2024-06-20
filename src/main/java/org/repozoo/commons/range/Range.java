@@ -70,8 +70,9 @@ public class Range<T> implements RangeSet<T> {
 
     @Override
     public RangeSet<T> intersection(RangeSet<T> others) {
-        return others.streamRanges().map(other -> Range.intersection(this, other))
-                .reduce(RangeSet.empty(), RangeSet::sum);
+        return others.streamRanges()
+            .map(other -> Range.intersection(this, other))
+            .reduce(RangeSet.empty(), RangeSet::mergeOverlappingAndAdjacent);
     }
 
     /**
@@ -139,11 +140,15 @@ public class Range<T> implements RangeSet<T> {
     }
 
     /**
-     * Returns a {@link Range} that surrounds all supplied ranges<br>
-     * example: <pre>enclose([1-3], [5-8]) returns [1-8]</pre>
+     * Returns a {@link Range} with the global min max values of all supplied ranges<br>
+     * example:
+     * <ul>
+     *     <li><pre>enclose([1-3], [5-8]) -> [1-8]</pre></li>
+     *     <li><pre>enclose([1-6], [5-8]) -> [1-8]</pre></li>
+     * </ul>
      */
     @SafeVarargs
-    public static <T> Range<T> surround(Range<T>... ranges) {
+    public static <T> Range<T> newRangeFromGlobalMinMax(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
         Value<T> minStart = min(Range::minValue, ranges);
         Value<T> maxEnd = max(Range::maxValue, ranges);

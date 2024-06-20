@@ -14,12 +14,13 @@ public interface RangeSet<T> {
      * or an empty stream if this {@link RangeSet} is empty.
      */
     Stream<Range<T>> streamRanges();
+
     default Stream<T> streamValues() {
         return streamRanges().flatMap(Range::streamValues);
     }
 
     default void forEachValue(Consumer<T> valueConsumer) {
-        streamValues().forEach(valueConsumer::accept);
+        streamValues().forEach(valueConsumer);
     }
 
 
@@ -43,9 +44,9 @@ public interface RangeSet<T> {
      */
     default RangeSet<T> intersection(RangeSet<T> others) {
         List<Range<T>> intersections = streamRanges()
-                .map(others::intersection)
-                .flatMap(RangeSet::streamRanges)
-                .collect(Collectors.toList());
+            .map(others::intersection)
+            .flatMap(RangeSet::streamRanges)
+            .collect(Collectors.toList());
         return newRangeSet(intersections);
     }
 
@@ -66,7 +67,7 @@ public interface RangeSet<T> {
      * <pre>rs1.add(rs2) returns rs3([1-5],[7-12])</pre>
      */
     default RangeSet<T> add(RangeSet<T> others) {
-        return RangeSet.sum(this, others);
+        return RangeSet.mergeOverlappingAndAdjacent(this, others);
     }
 
     /**
@@ -123,15 +124,23 @@ public interface RangeSet<T> {
     @SafeVarargs
     static <T> RangeSet<T> of(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
-        return normalize(Arrays.stream(ranges));
+        return mergeOverlappingAndAdjacent(Arrays.stream(ranges));
     }
 
     /**
-     * TODO
+     * Alias for {@link RangeSet#mergeOverlappingAndAdjacent(RangeSet, RangeSet)}
      */
     static <T> RangeSet<T> sum(RangeSet<T> set1, RangeSet<T> set2) {
-        Stream<Range<T>> rangeStream = Stream.concat(set1.streamRanges(), set2.streamRanges());
-        return RangeSet.normalize(rangeStream);
+        return RangeSet.mergeOverlappingAndAdjacent(set1, set2);
+    }
+
+    static <T> RangeSet<T> mergeOverlappingAndAdjacent(RangeSet<T> set1, RangeSet<T> set2) {
+        Stream<Range<T>> rangeStream = Stream
+            .concat(
+                set1.streamRanges(),
+                set2.streamRanges()
+            );
+        return RangeSet.mergeOverlappingAndAdjacent(rangeStream);
     }
 
     /**
@@ -141,21 +150,13 @@ public interface RangeSet<T> {
         return rangeSet.streamRanges().map(Range::toString).collect(Collectors.joining("\n"));
     }
 
-    private static <T> RangeSet<T> normalize(Stream<Range<T>> rangeStream) {
+    private static <T> RangeSet<T> mergeOverlappingAndAdjacent(Stream<Range<T>> rangeStream) {
         Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::minValue)).collect(RangeSet.toStack());
         return newRangeSet(stackedRanges);
     }
 
-    private static <T> RangeSet<T> add(Range<T> aRange, Range<T> other) {
-        if (aRange.intersects(other)) {
-            return Range.surround(aRange, other);
-        } else {
-            return newRangeSet(aRange, other);
-        }
-    }
-
-    private static <T> RangeSet<T> newRangeSet(Collection<Range<T>> ranges) {
-        return ranges::stream;
+    private static <T> RangeSet<T> newRangeSet(Collection<Range<T>> rangeCollection) {
+        return rangeCollection::stream;
     }
 
     @SafeVarargs
@@ -164,7 +165,11 @@ public interface RangeSet<T> {
     }
 
     private static <T> Collector<Range<T>, Stack<Range<T>>, Stack<Range<T>>> toStack() {
-        return Collector.of(Stack::new, RangeSet::addOnTop, RangeSet::mergeStacks);
+        return Collector.of(
+            Stack::new,
+            RangeSet::addOnTop,
+            RangeSet::combineStacks
+        );
     }
 
     private static <T> void addOnTop(Stack<Range<T>> stack, Range<T> range) {
@@ -172,12 +177,17 @@ public interface RangeSet<T> {
             stack.push(range);
         } else {
             Range<T> topRange = stack.pop();
-            RangeSet<T> sum = add(topRange, range);
+            RangeSet<T> sum;
+            if (topRange.intersects(range) || topRange.maxValue().next().isEqualTo(range.minValue())) {
+                sum = Range.newRangeFromGlobalMinMax(topRange, range);
+            } else {
+                sum = newRangeSet(topRange, range);
+            }
             sum.getRanges().forEach(stack::push);
         }
     }
 
-    private static <T> Stack<Range<T>> mergeStacks(Stack<Range<T>> stack1, Stack<Range<T>> stack2) {
+    private static <T> Stack<Range<T>> combineStacks(Stack<Range<T>> stack1, Stack<Range<T>> stack2) {
         throw new UnsupportedOperationException("TODO implement ...");
     }
 }

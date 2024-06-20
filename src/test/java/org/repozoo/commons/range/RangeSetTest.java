@@ -33,9 +33,7 @@ class RangeSetTest {
                 ).add(
                         IntRange.singleton(2)).getRanges()
         ).containsExactly(
-                IntRange.singleton(1),
-                IntRange.singleton(2),
-                IntRange.singleton(3)
+                IntRange.between(1, 3)
         );
     }
 
@@ -156,8 +154,7 @@ class RangeSetTest {
                 IntRange.between(8, 10),
                 IntRange.between(9, 15)).getRanges()
         ).containsExactly(
-                IntRange.between(1, 5),
-                IntRange.between(6, 15)
+                IntRange.between(1, 15)
         );
     }
 
