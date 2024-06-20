@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @EqualsAndHashCode
-public class SimpleRange<T> implements RangeI<T> {
+public class SimpleRange<T> implements Range<T> {
 
     private final Value<T> min;
     private final Value<T> max;
@@ -50,14 +50,14 @@ public class SimpleRange<T> implements RangeI<T> {
     /**
      * Returns true if this.max < other.min.
      */
-    @Override public boolean isBefore(RangeI<T> other) {
+    @Override public boolean isBefore(Range<T> other) {
         return maxValue().isBefore(other.minValue());
     }
 
     /**
      * Returns true if this.min > other.max.
      */
-    @Override public boolean isAfter(RangeI<T> other) {
+    @Override public boolean isAfter(Range<T> other) {
         return minValue().isAfter(other.maxValue());
     }
 
@@ -70,7 +70,7 @@ public class SimpleRange<T> implements RangeI<T> {
      * Returns a single element stream containing this range.
      */
     @Override
-    public Stream<RangeI<T>> streamRanges() {
+    public Stream<Range<T>> streamRanges() {
         return Stream.of(this);
     }
 
@@ -84,14 +84,14 @@ public class SimpleRange<T> implements RangeI<T> {
     /**
      * Returns true if this.min < other.min.
      */
-    @Override public boolean startsBefore(RangeI<T> other) {
+    @Override public boolean startsBefore(Range<T> other) {
         return minValue().isBefore(other.minValue());
     }
 
     /**
      * Returns true if this.max > other.max.
      */
-    public boolean endsAfter(RangeI<T> other) {
+    public boolean endsAfter(Range<T> other) {
         return maxValue().isAfter(other.maxValue());
     }
 
@@ -117,24 +117,24 @@ public class SimpleRange<T> implements RangeI<T> {
      * </ul>
      */
     @SafeVarargs
-    public static <T> RangeI<T> newRangeFromGlobalMinMax(RangeI<T>... ranges) {
+    public static <T> Range<T> newRangeFromGlobalMinMax(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
-        Value<T> minStart = min(RangeI::minValue, ranges);
-        Value<T> maxEnd = max(RangeI::maxValue, ranges);
+        Value<T> minStart = min(Range::minValue, ranges);
+        Value<T> maxEnd = max(Range::maxValue, ranges);
         return SimpleRange.between(minStart, maxEnd);
     }
 
-    static <X> RangeI<X> between(Value<X> min, Value<X> max) {
+    static <X> Range<X> between(Value<X> min, Value<X> max) {
         return new SimpleRange<>(min, max);
     }
 
-    static <T> RangeSet<T> remove(RangeI<T> aRange, RangeI<T> toRemove) {
+    static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
         if (aRange.intersects(toRemove)) {
             if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
                 return RangeSet.empty();
             } else if (aRange.contains(toRemove) && (toRemove.minValue().isAfter(aRange.minValue()) && toRemove.maxValue().isBefore(aRange.maxValue()))) {
-                RangeI<T> r1 = SimpleRange.between(aRange.minValue(), toRemove.minValue().previous());
-                RangeI<T> r2 = SimpleRange.between(toRemove.maxValue().next(), aRange.maxValue());
+                Range<T> r1 = SimpleRange.between(aRange.minValue(), toRemove.minValue().previous());
+                Range<T> r2 = SimpleRange.between(toRemove.maxValue().next(), aRange.maxValue());
                 return RangeSet.of(r1, r2);
             } else {
                 if (toRemove.minValue().isAfter(aRange.minValue())) {
@@ -148,10 +148,10 @@ public class SimpleRange<T> implements RangeI<T> {
         }
     }
 
-    static <T> RangeSet<T> intersection(RangeI<T> aRange, RangeI<T> other) {
+    static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
         if (aRange.intersects(other)) {
-            Value<T> maxStart = max(RangeI::minValue, aRange, other);
-            Value<T> minEnd = min(RangeI::maxValue, aRange, other);
+            Value<T> maxStart = max(Range::minValue, aRange, other);
+            Value<T> minEnd = min(Range::maxValue, aRange, other);
             return SimpleRange.between(maxStart, minEnd);
         } else {
             return RangeSet.empty();
@@ -159,12 +159,12 @@ public class SimpleRange<T> implements RangeI<T> {
     }
 
     @SafeVarargs
-    private static <T> Value<T> min(Function<RangeI<T>, Value<T>> extraction, RangeI<T>... ranges) {
+    private static <T> Value<T> min(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
         return Arrays.stream(ranges).min(Comparator.comparing(extraction)).map(extraction).orElseThrow();
     }
 
     @SafeVarargs
-    private static <T> Value<T> max(Function<RangeI<T>, Value<T>> extraction, RangeI<T>... ranges) {
+    private static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
         return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
     }
 }

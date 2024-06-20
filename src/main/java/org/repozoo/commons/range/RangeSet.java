@@ -13,10 +13,10 @@ public interface RangeSet<T> {
      * Returns a {@link SimpleRange} stream containing all ranges of this set<br>
      * or an empty stream if this {@link RangeSet} is empty.
      */
-    Stream<RangeI<T>> streamRanges();
+    Stream<Range<T>> streamRanges();
 
     default Stream<T> streamValues() {
-        return streamRanges().flatMap(RangeI::streamValues);
+        return streamRanges().flatMap(Range::streamValues);
     }
 
     default void forEachValue(Consumer<T> valueConsumer) {
@@ -43,7 +43,7 @@ public interface RangeSet<T> {
      * Returns a new RangeSet containing all {@link SimpleRange} parts that exist in this and others.
      */
     default RangeSet<T> intersection(RangeSet<T> others) {
-        List<RangeI<T>> intersections = streamRanges()
+        List<Range<T>> intersections = streamRanges()
             .map(others::intersection)
             .flatMap(RangeSet::streamRanges)
             .collect(Collectors.toList());
@@ -53,7 +53,7 @@ public interface RangeSet<T> {
     /**
      * Returns true if this {@link SimpleRange} and other do not intersect.
      */
-    default boolean isDistinct(RangeI<T> other) {
+    default boolean isDistinct(Range<T> other) {
         return !intersects(other);
     }
 
@@ -80,13 +80,13 @@ public interface RangeSet<T> {
      * <pre>rs1.remove(rs2) returns rs3([1-2],[5-5],[7-8])</pre>
      */
     default RangeSet<T> remove(RangeSet<T> others) {
-        List<RangeI<T>> newRanges = new ArrayList<>();
+        List<Range<T>> newRanges = new ArrayList<>();
         getRanges().forEach(range -> {
-            Stack<RangeI<T>> stack = new Stack<>();
+            Stack<Range<T>> stack = new Stack<>();
             stack.push(range);
             others.streamRanges().forEach(other -> {
                 if (!stack.isEmpty()) {
-                    RangeI<T> topRange = stack.pop();
+                    Range<T> topRange = stack.pop();
                     RangeSet<T> result = SimpleRange.remove(topRange, other);
                     result.streamRanges().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
@@ -106,7 +106,7 @@ public interface RangeSet<T> {
     /**
      * Returns a list of all {@link SimpleRange}s in this set, ordered by Range::min ascending.
      */
-    default List<RangeI<T>> getRanges() {
+    default List<Range<T>> getRanges() {
         return streamRanges().collect(Collectors.toList());
     }
 
@@ -122,7 +122,7 @@ public interface RangeSet<T> {
      * Creates a new {@link RangeSet} containing all specified {@link SimpleRange}s after being normalized.
      */
     @SafeVarargs
-    static <T> RangeSet<T> of(RangeI<T>... ranges) {
+    static <T> RangeSet<T> of(Range<T>... ranges) {
         Objects.requireNonNull(ranges);
         return mergeOverlappingAndAdjacent(Arrays.stream(ranges));
     }
@@ -135,7 +135,7 @@ public interface RangeSet<T> {
     }
 
     static <T> RangeSet<T> mergeOverlappingAndAdjacent(RangeSet<T> set1, RangeSet<T> set2) {
-        Stream<RangeI<T>> rangeStream = Stream
+        Stream<Range<T>> rangeStream = Stream
             .concat(
                 set1.streamRanges(),
                 set2.streamRanges()
@@ -147,24 +147,24 @@ public interface RangeSet<T> {
      * TODO
      */
     static <T> String toString(RangeSet<T> rangeSet) {
-        return rangeSet.streamRanges().map(RangeI::toString).collect(Collectors.joining("\n"));
+        return rangeSet.streamRanges().map(Range::toString).collect(Collectors.joining("\n"));
     }
 
-    private static <T> RangeSet<T> mergeOverlappingAndAdjacent(Stream<RangeI<T>> rangeStream) {
-        Stack<RangeI<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(RangeI::minValue)).collect(RangeSet.toStack());
+    private static <T> RangeSet<T> mergeOverlappingAndAdjacent(Stream<Range<T>> rangeStream) {
+        Stack<Range<T>> stackedRanges = rangeStream.sorted(Comparator.comparing(Range::minValue)).collect(RangeSet.toStack());
         return newRangeSet(stackedRanges);
     }
 
-    private static <T> RangeSet<T> newRangeSet(Collection<RangeI<T>> rangeCollection) {
+    private static <T> RangeSet<T> newRangeSet(Collection<Range<T>> rangeCollection) {
         return rangeCollection::stream;
     }
 
     @SafeVarargs
-    private static <T> RangeSet<T> newRangeSet(RangeI<T>... ranges) {
+    private static <T> RangeSet<T> newRangeSet(Range<T>... ranges) {
         return Arrays.asList(ranges)::stream;
     }
 
-    private static <T> Collector<RangeI<T>, Stack<RangeI<T>>, Stack<RangeI<T>>> toStack() {
+    private static <T> Collector<Range<T>, Stack<Range<T>>, Stack<Range<T>>> toStack() {
         return Collector.of(
             Stack::new,
             RangeSet::addOnTop,
@@ -172,11 +172,11 @@ public interface RangeSet<T> {
         );
     }
 
-    private static <T> void addOnTop(Stack<RangeI<T>> stack, RangeI<T> range) {
+    private static <T> void addOnTop(Stack<Range<T>> stack, Range<T> range) {
         if (stack.isEmpty()) {
             stack.push(range);
         } else {
-            RangeI<T> topRange = stack.pop();
+            Range<T> topRange = stack.pop();
             RangeSet<T> sum;
             if (topRange.intersects(range) || topRange.maxValue().next().isEqualTo(range.minValue())) {
                 sum = SimpleRange.newRangeFromGlobalMinMax(topRange, range);
@@ -187,7 +187,7 @@ public interface RangeSet<T> {
         }
     }
 
-    private static <T> Stack<RangeI<T>> combineStacks(Stack<RangeI<T>> stack1, Stack<RangeI<T>> stack2) {
+    private static <T> Stack<Range<T>> combineStacks(Stack<Range<T>> stack1, Stack<Range<T>> stack2) {
         throw new UnsupportedOperationException("TODO implement ...");
     }
 }

@@ -2,7 +2,7 @@ package org.repozoo.commons.range;
 
 import java.util.stream.Stream;
 
-public interface RangeI<T> extends RangeSet<T> {
+public interface Range<T> extends RangeSet<T> {
     Value<T> minValue();
 
     Value<T> maxValue();
@@ -11,7 +11,7 @@ public interface RangeI<T> extends RangeSet<T> {
 
     T max();
 
-    default boolean contains(RangeI<T> other) {
+    default boolean contains(Range<T> other) {
         return contains(other.minValue()) && contains(other.maxValue());
     }
 
@@ -30,7 +30,7 @@ public interface RangeI<T> extends RangeSet<T> {
         return others.streamRanges().anyMatch(this::intersects);
     }
 
-    default boolean intersects(RangeI<T> other) {
+    default boolean intersects(Range<T> other) {
         return this.contains(other.minValue()) || this.contains(other.maxValue()) || other.contains(this);
     }
 
@@ -40,15 +40,15 @@ public interface RangeI<T> extends RangeSet<T> {
             .reduce(RangeSet.empty(), RangeSet::mergeOverlappingAndAdjacent);
     }
 
-    boolean isBefore(RangeI<T> other);
+    boolean isBefore(Range<T> other);
 
-    boolean isAfter(RangeI<T> other);
+    boolean isAfter(Range<T> other);
 
     @Override boolean isEmpty();
 
-    @Override Stream<RangeI<T>> streamRanges();
+    @Override Stream<Range<T>> streamRanges();
 
     @Override Stream<T> streamValues();
 
-    boolean startsBefore(RangeI<T> other);
+    boolean startsBefore(Range<T> other);
 }

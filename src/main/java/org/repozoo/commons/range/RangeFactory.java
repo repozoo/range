@@ -6,7 +6,7 @@ import java.util.function.UnaryOperator;
 public class RangeFactory {
 
     public interface CreateRange<T> {
-        RangeI<T> between(T min, T max);
+        Range<T> between(T min, T max);
     }
 
     @SuppressWarnings("unused")

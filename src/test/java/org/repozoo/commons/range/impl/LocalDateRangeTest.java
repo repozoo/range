@@ -1,7 +1,7 @@
 package org.repozoo.commons.range.impl;
 
 import org.junit.jupiter.api.Test;
-import org.repozoo.commons.range.RangeI;
+import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.RangeSet;
 import org.repozoo.commons.range.factories.LocalDateRange;
 
@@ -17,8 +17,8 @@ class LocalDateRangeTest {
 
     @Test
     void streamValues_givesExpectedElements() {
-        RangeI<LocalDate> vacationBerlin = LocalDateRange.between(LocalDate.parse("2024-07-18"), LocalDate.parse("2024-08-30"));
-        RangeI<LocalDate> vacationBayern = LocalDateRange.between(LocalDate.parse("2024-07-29"), LocalDate.parse("2024-09-09"));
+        Range<LocalDate> vacationBerlin = LocalDateRange.between(LocalDate.parse("2024-07-18"), LocalDate.parse("2024-08-30"));
+        Range<LocalDate> vacationBayern = LocalDateRange.between(LocalDate.parse("2024-07-29"), LocalDate.parse("2024-09-09"));
         RangeSet<LocalDate> intersection = vacationBerlin.intersection(vacationBayern);
         
         List<LocalDate> list = intersection.streamValues().toList();
@@ -30,8 +30,8 @@ class LocalDateRangeTest {
 
     @Test
     void forEachValue_givesExpectedElements() {
-        RangeI<LocalDate> vacationBerlin = LocalDateRange.between(LocalDate.parse("2024-07-18"), LocalDate.parse("2024-08-30"));
-        RangeI<LocalDate> vacationBayern = LocalDateRange.between(LocalDate.parse("2024-07-29"), LocalDate.parse("2024-09-09"));
+        Range<LocalDate> vacationBerlin = LocalDateRange.between(LocalDate.parse("2024-07-18"), LocalDate.parse("2024-08-30"));
+        Range<LocalDate> vacationBayern = LocalDateRange.between(LocalDate.parse("2024-07-29"), LocalDate.parse("2024-09-09"));
         RangeSet<LocalDate> intersection = vacationBerlin.intersection(vacationBayern);
         List<LocalDate> list = new ArrayList<>();
 

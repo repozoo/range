@@ -1,7 +1,7 @@
 package org.repozoo.commons.range.factories;
 
 import org.repozoo.commons.range.RangeFactory;
-import org.repozoo.commons.range.RangeI;
+import org.repozoo.commons.range.Range;
 
 import java.util.Comparator;
 import java.util.function.UnaryOperator;
@@ -12,11 +12,11 @@ public class IntRange {
 
     private static final RangeFactory.CreateRange<Integer> createRange = createIntRange();
 
-    public static RangeI<Integer> between(Integer min, Integer max) {
+    public static Range<Integer> between(Integer min, Integer max) {
         return createRange.between(min, max);
     }
 
-    public static RangeI<Integer> singleton(int i) {
+    public static Range<Integer> singleton(int i) {
         return createRange.between(i, i);
     }
 

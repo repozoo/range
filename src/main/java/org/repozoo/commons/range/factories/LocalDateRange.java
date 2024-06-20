@@ -1,7 +1,7 @@
 package org.repozoo.commons.range.factories;
 
 import org.repozoo.commons.range.RangeFactory;
-import org.repozoo.commons.range.RangeI;
+import org.repozoo.commons.range.Range;
 
 import java.time.LocalDate;
 import java.util.function.UnaryOperator;
@@ -12,7 +12,7 @@ public class LocalDateRange {
 
     private static final RangeFactory.CreateRange<LocalDate> createRange = createRange();
 
-    public static RangeI<LocalDate> between(LocalDate min, LocalDate max) {
+    public static Range<LocalDate> between(LocalDate min, LocalDate max) {
         return createRange.between(min, max);
     }
 

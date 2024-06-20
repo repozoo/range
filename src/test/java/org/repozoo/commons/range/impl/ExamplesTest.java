@@ -1,7 +1,7 @@
 package org.repozoo.commons.range.impl;
 
 import org.repozoo.commons.range.RangeFactory;
-import org.repozoo.commons.range.RangeI;
+import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.factories.LocalDateRange;
 import org.repozoo.commons.range.RangeSet;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class ExamplesTest {
         // use the factory
         YearMonth jan = YearMonth.parse("2022-01");
         YearMonth dec = YearMonth.parse("2022-12");
-        RangeI<YearMonth> range = createRange.between(jan, dec);
+        Range<YearMonth> range = createRange.between(jan, dec);
 
         assertThat(range.min()).isEqualTo(jan);
         assertThat(range.max()).isEqualTo(dec);
@@ -64,7 +64,7 @@ class ExamplesTest {
     void remove_example() {
         // Assing
         YearMonth dec2021 = YearMonth.parse("2021-12");
-        RangeI<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
+        Range<LocalDate> december = LocalDateRange.between(dec2021.atDay(1), dec2021.atEndOfMonth());
         RangeSet<LocalDate> vacationSahrah = RangeSet.of(
                 LocalDateRange.between(dec2021.atDay(1), dec2021.atDay(5)),
                 LocalDateRange.between(dec2021.atDay(14), dec2021.atDay(26)),
