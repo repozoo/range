@@ -28,11 +28,11 @@ class RangeFactoryTest {
         YearMonth nine = YearMonth.parse("2021-09");
         YearMonth eleven = YearMonth.parse("2021-11");
 
-        Range<YearMonth> fourToNine = createRange.between(four, nine);
-        Range<YearMonth> twoToSix = createRange.between(two, six);
-        Range<YearMonth> sixToEleven = createRange.between(six, eleven);
-        Range<YearMonth> sixToSeven = createRange.between(six, seven);
-        Range<YearMonth> twoToFour = createRange.between(two, four);
+        RangeI<YearMonth> fourToNine = createRange.between(four, nine);
+        RangeI<YearMonth> twoToSix = createRange.between(two, six);
+        RangeI<YearMonth> sixToEleven = createRange.between(six, eleven);
+        RangeI<YearMonth> sixToSeven = createRange.between(six, seven);
+        RangeI<YearMonth> twoToFour = createRange.between(two, four);
 
         assertThat(fourToNine.remove(RangeSet.empty()).getRanges()).containsExactly(createRange.between(four, nine));
 
@@ -67,11 +67,11 @@ class RangeFactoryTest {
         Integer nine = 9;
         Integer eleven = 11;
 
-        Range<Integer> fourToNine = createRange.between(four, nine);
-        Range<Integer> twoToSix = createRange.between(two, six);
-        Range<Integer> sixToEleven = createRange.between(six, eleven);
-        Range<Integer> sixToSeven = createRange.between(six, seven);
-        Range<Integer> twoToFour = createRange.between(two, four);
+        RangeI<Integer> fourToNine = createRange.between(four, nine);
+        RangeI<Integer> twoToSix = createRange.between(two, six);
+        RangeI<Integer> sixToEleven = createRange.between(six, eleven);
+        RangeI<Integer> sixToSeven = createRange.between(six, seven);
+        RangeI<Integer> twoToFour = createRange.between(two, four);
 
         assertThat(fourToNine.remove(fourToNine).getRanges()).isEmpty();
 

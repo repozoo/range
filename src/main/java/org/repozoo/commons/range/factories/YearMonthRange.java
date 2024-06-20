@@ -2,6 +2,7 @@ package org.repozoo.commons.range.factories;
 
 import org.repozoo.commons.range.Range;
 import org.repozoo.commons.range.RangeFactory;
+import org.repozoo.commons.range.RangeI;
 
 import java.time.YearMonth;
 import java.util.function.UnaryOperator;
@@ -12,7 +13,7 @@ public class YearMonthRange {
 
     private static final RangeFactory.CreateRange<YearMonth> createRange = createRange();
 
-    public static Range<YearMonth> between(YearMonth min, YearMonth max) {
+    public static RangeI<YearMonth> between(YearMonth min, YearMonth max) {
         return createRange.between(min, max);
     }
 
