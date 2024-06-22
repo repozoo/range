@@ -90,11 +90,17 @@ public interface Range<T> extends RangeSet<T> {
         return Stream.of(this);
     }
 
-    @Override
     default Stream<T> streamValues() {
         return Stream
             .iterate(minValue(), value -> value.isBeforeOrEqual(maxValue()), Value::next)
             .map(Value::value);
+    }
+
+    /**
+     * Returns a String representation of this range in the form <pre>"Range[from=1, to=3]"</pre>
+     */
+    default String asString() {
+        return "Range{from=" + min() + ", to=" + max() + '}';
     }
 
     static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
@@ -125,13 +131,6 @@ public interface Range<T> extends RangeSet<T> {
     @SafeVarargs
     private static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
         return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
-    }
-
-    /**
-     * Returns a String representation of this range in the form <pre>"Range[from=1, to=3]"</pre>
-     */
-    default String asString() {
-        return "Range{from=" + min() + ", to=" + max() + '}';
     }
 
     /**
