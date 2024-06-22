@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 @EqualsAndHashCode
 @AllArgsConstructor
-class Value<X> implements Comparable<Value<X>> {
+public class Value<X> implements Comparable<Value<X>> {
 
     private final X value;
     private final ValueIterator<X> iterator;

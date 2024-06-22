@@ -8,33 +8,9 @@ import java.util.stream.Stream;
 
 public interface Range<T> extends RangeSet<T> {
 
-    static <X> Range<X> between(Value<X> min, Value<X> max) {
-        return new SimpleRange<>(min, max);
-    }
-
-    static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
-        if (aRange.intersects(other)) {
-            Value<T> maxStart = max(Range::minValue, aRange, other);
-            Value<T> minEnd = min(Range::maxValue, aRange, other);
-            return between(maxStart, minEnd);
-        } else {
-            return RangeSet.empty();
-        }
-    }
-
     Value<T> minValue();
 
     Value<T> maxValue();
-
-    default boolean isValidRange() {
-        return min() != null && max() != null && minValue().isBeforeOrEqual(maxValue());
-    }
-
-    default void ensureValidRange() {
-        if (!isValidRange()) {
-            throw new IllegalArgumentException("min must not be after max, \nmin: " + min() + "\nmax: " + max());
-        }
-    }
 
     /**
      * Returns the inclusive minimum of this range.
@@ -48,6 +24,16 @@ public interface Range<T> extends RangeSet<T> {
      */
     default T max() {
         return maxValue().value();
+    }
+
+    default boolean isValidRange() {
+        return min() != null && max() != null && minValue().isBeforeOrEqual(maxValue());
+    }
+
+    default void ensureValidRange() {
+        if (!isValidRange()) {
+            throw new IllegalArgumentException("min must not be after max, \nmin: " + min() + "\nmax: " + max());
+        }
     }
 
     default boolean contains(Range<T> other) {
@@ -111,13 +97,6 @@ public interface Range<T> extends RangeSet<T> {
             .map(Value::value);
     }
 
-    /**
-     * Returns true if this.min < other.min.
-     */
-    default boolean startsBefore(Range<T> other) {
-        return minValue().isBefore(other.minValue());
-    }
-
     static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
         if (aRange.intersects(toRemove)) {
             if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
@@ -151,8 +130,7 @@ public interface Range<T> extends RangeSet<T> {
     /**
      * Returns a String representation of this range in the form <pre>"Range[from=1, to=3]"</pre>
      */
-    @Override
-    default String toString() {
+    default String asString() {
         return "Range{from=" + min() + ", to=" + max() + '}';
     }
 
@@ -170,5 +148,19 @@ public interface Range<T> extends RangeSet<T> {
         Value<T> minStart = min(Range::minValue, ranges);
         Value<T> maxEnd = max(Range::maxValue, ranges);
         return Range.between(minStart, maxEnd);
+    }
+
+    static <X> Range<X> between(Value<X> min, Value<X> max) {
+        return new SimpleRange<>(min, max);
+    }
+
+    static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
+        if (aRange.intersects(other)) {
+            Value<T> maxStart = max(Range::minValue, aRange, other);
+            Value<T> minEnd = min(Range::maxValue, aRange, other);
+            return between(maxStart, minEnd);
+        } else {
+            return RangeSet.empty();
+        }
     }
 }

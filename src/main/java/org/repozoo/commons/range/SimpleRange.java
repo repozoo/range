@@ -24,5 +24,7 @@ public class SimpleRange<T> implements Range<T> {
         return max;
     }
 
-
+    @Override public String toString() {
+        return asString();
+    }
 }
