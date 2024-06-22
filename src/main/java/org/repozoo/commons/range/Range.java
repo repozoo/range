@@ -92,7 +92,7 @@ public interface Range<T> extends RangeSet<T> {
      * Returns true if any {@link SimpleRange} of others intersects with this {@link SimpleRange}.
      */
     default boolean intersects(RangeSet<T> others) {
-        return others.streamRanges().anyMatch(this::intersects);
+        return others.rangeStream().anyMatch(this::intersects);
     }
 
     default boolean intersects(Range<T> other) {
@@ -100,7 +100,7 @@ public interface Range<T> extends RangeSet<T> {
     }
 
     default RangeSet<T> intersection(RangeSet<T> others) {
-        return others.streamRanges()
+        return others.rangeStream()
             .map(other -> Range.intersection(this, other))
             .reduce(RangeSet.empty(), RangeSet::mergeOverlappingAndAdjacent);
     }
@@ -111,7 +111,7 @@ public interface Range<T> extends RangeSet<T> {
 
     @Override boolean isEmpty();
 
-    @Override Stream<Range<T>> streamRanges();
+    @Override Stream<Range<T>> rangeStream();
 
     @Override Stream<T> streamValues();
 

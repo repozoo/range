@@ -52,7 +52,7 @@ public class SimpleRange<T> implements Range<T> {
      * Returns a single element stream containing this range.
      */
     @Override
-    public Stream<Range<T>> streamRanges() {
+    public Stream<Range<T>> rangeStream() {
         return Stream.of(this);
     }
 

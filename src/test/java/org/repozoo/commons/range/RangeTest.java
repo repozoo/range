@@ -94,16 +94,16 @@ class RangeTest {
 
     @Test
     void intersection() {
-        assertThat(IntRange.between(1, 1).intersection(IntRange.between(1, 1)).streamRanges()).containsExactly(IntRange.between(1, 1));
-        assertThat(IntRange.between(1, 4).intersection(IntRange.between(2, 3)).streamRanges()).containsExactly(IntRange.between(2, 3));
-        assertThat(IntRange.between(2, 3).intersection(IntRange.between(1, 4)).streamRanges()).containsExactly(IntRange.between(2, 3));
-        assertThat(IntRange.between(1, 3).intersection(IntRange.between(2, 4)).streamRanges()).containsExactly(IntRange.between(2, 3));
-        assertThat(IntRange.between(2, 4).intersection(IntRange.between(1, 3)).streamRanges()).containsExactly(IntRange.between(2, 3));
+        assertThat(IntRange.between(1, 1).intersection(IntRange.between(1, 1)).rangeStream()).containsExactly(IntRange.between(1, 1));
+        assertThat(IntRange.between(1, 4).intersection(IntRange.between(2, 3)).rangeStream()).containsExactly(IntRange.between(2, 3));
+        assertThat(IntRange.between(2, 3).intersection(IntRange.between(1, 4)).rangeStream()).containsExactly(IntRange.between(2, 3));
+        assertThat(IntRange.between(1, 3).intersection(IntRange.between(2, 4)).rangeStream()).containsExactly(IntRange.between(2, 3));
+        assertThat(IntRange.between(2, 4).intersection(IntRange.between(1, 3)).rangeStream()).containsExactly(IntRange.between(2, 3));
 
-        Assertions.assertThat(IntRange.between(1, 1).intersection(IntRange.between(2, 2)).streamRanges()).isEmpty();
-        Assertions.assertThat(IntRange.between(2, 2).intersection(IntRange.between(1, 1)).streamRanges()).isEmpty();
+        Assertions.assertThat(IntRange.between(1, 1).intersection(IntRange.between(2, 2)).rangeStream()).isEmpty();
+        Assertions.assertThat(IntRange.between(2, 2).intersection(IntRange.between(1, 1)).rangeStream()).isEmpty();
 
-        assertThat(IntRange.between(7, 10).intersection(IntRange.between(9, 11)).streamRanges()).containsExactly(IntRange.between(9, 10));
+        assertThat(IntRange.between(7, 10).intersection(IntRange.between(9, 11)).rangeStream()).containsExactly(IntRange.between(9, 10));
         assertThat(
                 IntRange.between(11, 100)
                         .intersection(

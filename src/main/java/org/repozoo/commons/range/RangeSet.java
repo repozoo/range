@@ -13,10 +13,10 @@ public interface RangeSet<T> {
      * Returns a {@link SimpleRange} stream containing all ranges of this set<br>
      * or an empty stream if this {@link RangeSet} is empty.
      */
-    Stream<Range<T>> streamRanges();
+    Stream<Range<T>> rangeStream();
 
     default Stream<T> streamValues() {
-        return streamRanges().flatMap(Range::streamValues);
+        return rangeStream().flatMap(Range::streamValues);
     }
 
     default void forEachValue(Consumer<T> valueConsumer) {
@@ -29,23 +29,23 @@ public interface RangeSet<T> {
      * At least one {@link SimpleRange} of this set contains 'other'.
      */
     default boolean contains(RangeSet<T> others) {
-        return others.streamRanges().allMatch(other -> streamRanges().anyMatch(r -> r.contains(other)));
+        return others.rangeStream().allMatch(other -> rangeStream().anyMatch(r -> r.contains(other)));
     }
 
     /**
      * Returns true if any {@link SimpleRange} of this set intersects with at least one {@link SimpleRange} of others.
      */
     default boolean intersects(RangeSet<T> others) {
-        return streamRanges().anyMatch(aRange -> others.streamRanges().anyMatch(aRange::intersects));
+        return rangeStream().anyMatch(aRange -> others.rangeStream().anyMatch(aRange::intersects));
     }
 
     /**
      * Returns a new RangeSet containing all {@link SimpleRange} parts that exist in this and others.
      */
     default RangeSet<T> intersection(RangeSet<T> others) {
-        List<Range<T>> intersections = streamRanges()
+        List<Range<T>> intersections = rangeStream()
             .map(others::intersection)
-            .flatMap(RangeSet::streamRanges)
+            .flatMap(RangeSet::rangeStream)
             .collect(Collectors.toList());
         return newRangeSet(intersections);
     }
@@ -84,11 +84,11 @@ public interface RangeSet<T> {
         getRanges().forEach(range -> {
             Stack<Range<T>> stack = new Stack<>();
             stack.push(range);
-            others.streamRanges().forEach(other -> {
+            others.rangeStream().forEach(other -> {
                 if (!stack.isEmpty()) {
                     Range<T> topRange = stack.pop();
                     RangeSet<T> result = Range.remove(topRange, other);
-                    result.streamRanges().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
+                    result.rangeStream().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
             });
             newRanges.addAll(stack);
@@ -107,7 +107,7 @@ public interface RangeSet<T> {
      * Returns a list of all {@link SimpleRange}s in this set, ordered by Range::min ascending.
      */
     default List<Range<T>> getRanges() {
-        return streamRanges().collect(Collectors.toList());
+        return rangeStream().collect(Collectors.toList());
     }
 
 
@@ -137,8 +137,8 @@ public interface RangeSet<T> {
     static <T> RangeSet<T> mergeOverlappingAndAdjacent(RangeSet<T> set1, RangeSet<T> set2) {
         Stream<Range<T>> rangeStream = Stream
             .concat(
-                set1.streamRanges(),
-                set2.streamRanges()
+                set1.rangeStream(),
+                set2.rangeStream()
             );
         return RangeSet.mergeOverlappingAndAdjacent(rangeStream);
     }
@@ -147,7 +147,7 @@ public interface RangeSet<T> {
      * TODO
      */
     static <T> String toString(RangeSet<T> rangeSet) {
-        return rangeSet.streamRanges().map(Range::toString).collect(Collectors.joining("\n"));
+        return rangeSet.rangeStream().map(Range::toString).collect(Collectors.joining("\n"));
     }
 
     private static <T> RangeSet<T> mergeOverlappingAndAdjacent(Stream<Range<T>> rangeStream) {
