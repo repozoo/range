@@ -87,7 +87,7 @@ public interface RangeSet<T> {
             others.streamRanges().forEach(other -> {
                 if (!stack.isEmpty()) {
                     Range<T> topRange = stack.pop();
-                    RangeSet<T> result = SimpleRange.remove(topRange, other);
+                    RangeSet<T> result = Range.remove(topRange, other);
                     result.streamRanges().filter(Predicate.not(RangeSet::isEmpty)).forEach(stack::push);
                 }
             });
@@ -179,7 +179,7 @@ public interface RangeSet<T> {
             Range<T> topRange = stack.pop();
             RangeSet<T> sum;
             if (topRange.intersects(range) || topRange.maxValue().next().isEqualTo(range.minValue())) {
-                sum = SimpleRange.newRangeFromGlobalMinMax(topRange, range);
+                sum = Range.newRangeFromGlobalMinMax(topRange, range);
             } else {
                 sum = newRangeSet(topRange, range);
             }

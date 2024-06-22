@@ -2,10 +2,7 @@ package org.repozoo.commons.range;
 
 import lombok.EqualsAndHashCode;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 @EqualsAndHashCode
@@ -14,7 +11,7 @@ public class SimpleRange<T> implements Range<T> {
     private final Value<T> min;
     private final Value<T> max;
 
-    private SimpleRange(Value<T> min, Value<T> max) {
+    SimpleRange(Value<T> min, Value<T> max) {
         Objects.requireNonNull(min);
         Objects.requireNonNull(max);
         if (min.isAfter(max)) {
@@ -31,21 +28,6 @@ public class SimpleRange<T> implements Range<T> {
     @Override public Value<T> maxValue() {
         return max;
     }
-
-    /**
-     * Returns the inclusive minimum of this range.
-     */
-    @Override public T min() {
-        return minValue().value();
-    }
-
-    /**
-     * Returns the inclusive maximum of this range.
-     */
-    @Override public T max() {
-        return maxValue().value();
-    }
-
 
     /**
      * Returns true if this.max < other.min.
@@ -81,12 +63,6 @@ public class SimpleRange<T> implements Range<T> {
             .map(Value::value);
     }
 
-    /**
-     * Returns true if this.min < other.min.
-     */
-    @Override public boolean startsBefore(Range<T> other) {
-        return minValue().isBefore(other.minValue());
-    }
 
     /**
      * Returns true if this.max > other.max.
@@ -95,9 +71,6 @@ public class SimpleRange<T> implements Range<T> {
         return maxValue().isAfter(other.maxValue());
     }
 
-//    boolean intersects(RangeI<T> other) {
-//        return this.contains(other.minValue()) || this.contains(other.maxValue()) || other.contains(this);
-//    }
 
     /**
      * Returns a String representation of this range in the form <pre>"Range[from=1, to=3]"</pre>
@@ -108,63 +81,4 @@ public class SimpleRange<T> implements Range<T> {
     }
 
 
-    /**
-     * Returns a {@link SimpleRange} with the global min max values of all supplied ranges<br>
-     * example:
-     * <ul>
-     *     <li><pre>enclose([1-3], [5-8]) -> [1-8]</pre></li>
-     *     <li><pre>enclose([1-6], [5-8]) -> [1-8]</pre></li>
-     * </ul>
-     */
-    @SafeVarargs
-    public static <T> Range<T> newRangeFromGlobalMinMax(Range<T>... ranges) {
-        Objects.requireNonNull(ranges);
-        Value<T> minStart = min(Range::minValue, ranges);
-        Value<T> maxEnd = max(Range::maxValue, ranges);
-        return SimpleRange.between(minStart, maxEnd);
-    }
-
-    static <X> Range<X> between(Value<X> min, Value<X> max) {
-        return new SimpleRange<>(min, max);
-    }
-
-    static <T> RangeSet<T> remove(Range<T> aRange, Range<T> toRemove) {
-        if (aRange.intersects(toRemove)) {
-            if (aRange.equals(toRemove) || toRemove.contains(aRange)) {
-                return RangeSet.empty();
-            } else if (aRange.contains(toRemove) && (toRemove.minValue().isAfter(aRange.minValue()) && toRemove.maxValue().isBefore(aRange.maxValue()))) {
-                Range<T> r1 = SimpleRange.between(aRange.minValue(), toRemove.minValue().previous());
-                Range<T> r2 = SimpleRange.between(toRemove.maxValue().next(), aRange.maxValue());
-                return RangeSet.of(r1, r2);
-            } else {
-                if (toRemove.minValue().isAfter(aRange.minValue())) {
-                    return SimpleRange.between(aRange.minValue(), toRemove.minValue().previous());
-                } else {
-                    return SimpleRange.between(toRemove.maxValue().next(), aRange.maxValue());
-                }
-            }
-        } else {
-            return aRange;
-        }
-    }
-
-    static <T> RangeSet<T> intersection(Range<T> aRange, Range<T> other) {
-        if (aRange.intersects(other)) {
-            Value<T> maxStart = max(Range::minValue, aRange, other);
-            Value<T> minEnd = min(Range::maxValue, aRange, other);
-            return SimpleRange.between(maxStart, minEnd);
-        } else {
-            return RangeSet.empty();
-        }
-    }
-
-    @SafeVarargs
-    private static <T> Value<T> min(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
-        return Arrays.stream(ranges).min(Comparator.comparing(extraction)).map(extraction).orElseThrow();
-    }
-
-    @SafeVarargs
-    private static <T> Value<T> max(Function<Range<T>, Value<T>> extraction, Range<T>... ranges) {
-        return Arrays.stream(ranges).max(Comparator.comparing(extraction)).map(extraction).orElseThrow();
-    }
 }
