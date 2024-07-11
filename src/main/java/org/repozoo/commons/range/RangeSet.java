@@ -127,6 +127,11 @@ public interface RangeSet<T> {
         return mergeOverlappingAndAdjacent(Arrays.stream(ranges));
     }
 
+    static <T> RangeSet<T> of(Collection<Range<T>> ranges) {
+        Objects.requireNonNull(ranges);
+        return mergeOverlappingAndAdjacent(ranges.stream());
+    }
+
     /**
      * Alias for {@link RangeSet#mergeOverlappingAndAdjacent(RangeSet, RangeSet)}
      */
